@@ -1,3 +1,24 @@
-node_modules
-dist
+
+node_modules/
+dist/
+
+# Environment variables and secrets
 .env
+.env.*
+!.env.example
+
+# Python virtual environments
+.venv/
+venv/
+env/
+
+# Python caches and compiled files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local databases and uploaded files
+*.db
+*.sqlite
+*.sqlite3
+uploads/
