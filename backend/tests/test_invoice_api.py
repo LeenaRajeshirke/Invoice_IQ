@@ -17,6 +17,15 @@ from app.api import routes_invoices
 from app.db.database import Base, get_db
 from app.db.models import Invoice
 from app.main import app
+from app.services.n8n_service import N8NIntegrationError
+
+
+WORKFLOW_RESULT = (
+    {"status": "valid", "errors": [], "warnings": []},
+    {"risk_level": "LOW", "findings": [], "explanation": "No obvious anomalies detected."},
+    [],
+    True,
+)
 
 
 class InvoiceAPITests(unittest.TestCase):
@@ -55,12 +64,19 @@ class InvoiceAPITests(unittest.TestCase):
             return_value=self.ocr_text,
         )
         self.ocr_patch.start()
+        self.workflow_patch = patch.object(
+            routes_invoices,
+            "call_invoice_workflow",
+            return_value=WORKFLOW_RESULT,
+        )
+        self.workflow_patch.start()
         self.client = TestClient(app)
         self.client.__enter__()
 
     def tearDown(self) -> None:
         self.client.__exit__(None, None, None)
         app.dependency_overrides.clear()
+        self.workflow_patch.stop()
         self.ocr_patch.stop()
         self.uploads_patch.stop()
         self.upload_directory.cleanup()
@@ -182,12 +198,18 @@ class InvoiceAPITests(unittest.TestCase):
         self.assert_no_upload_artifacts()
 
     def test_supported_file_types_are_accepted(self) -> None:
-        uploads = (
+        uploads = [
             ("invoice.pdf", b"%PDF-1.7\ncontent", "application/pdf"),
             ("invoice.png", b"\x89PNG\r\n\x1a\ncontent", "image/png"),
             ("invoice.jpg", b"\xff\xd8\xffcontent", "image/jpeg"),
             ("invoice.jpeg", b"\xff\xd8\xffcontent", "image/jpeg"),
-        )
+            (
+                "invoice.csv",
+                b"invoice_number,vendor_name,invoice_date,currency,subtotal,tax,total\n"
+                b"CSV-1,CSV Vendor,2026-10-12,USD,100,8,108\n",
+                "text/csv",
+            ),
+        ]
 
         for filename, content, content_type in uploads:
             with self.subTest(filename=filename):
@@ -198,8 +220,88 @@ class InvoiceAPITests(unittest.TestCase):
                 self.assertEqual(response.status_code, 201, response.text)
 
         with Session(self.engine) as database:
-            self.assertEqual(len(list(database.scalars(select(Invoice.id)).all())), 4)
-        self.assertEqual(len(list(self.uploads_path.glob("*"))), 4)
+            self.assertEqual(len(list(database.scalars(select(Invoice.id)).all())), 5)
+        self.assertEqual(len(list(self.uploads_path.glob("*"))), 5)
+
+    def test_csv_upload_supports_multiple_records(self) -> None:
+        content = (
+            "invoice_number,vendor_name,invoice_date,currency,subtotal,tax,total\n"
+            "CSV-1,CSV Vendor,2026-10-12,USD,100,8,108\n"
+            "CSV-2,Another Vendor,2026-10-13,EUR,200,40,240\n"
+        )
+        response = self.client.post(
+            "/invoices/upload",
+            files={"file": ("invoices.csv", content.encode(), "text/csv")},
+        )
+
+        self.assertEqual(response.status_code, 201, response.text)
+        self.assertEqual(response.json()["invoice_count"], 2)
+        self.assertEqual(response.json()["processing_status"], "processed")
+        self.assertEqual(len(response.json()["invoice_ids"]), 2)
+        with Session(self.engine) as database:
+            records = list(database.scalars(select(Invoice).order_by(Invoice.id)).all())
+        self.assertEqual([record.invoice_number for record in records], ["CSV-1", "CSV-2"])
+
+    def test_xlsx_upload_extracts_invoice_row(self) -> None:
+        from openpyxl import Workbook
+
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.append(["invoice_number", "vendor_name", "invoice_date", "currency", "subtotal", "tax", "total"])
+        sheet.append(["XLSX-1", "Workbook Vendor", "2026-10-12", "USD", 100, 8, 108])
+        content = io.BytesIO()
+        workbook.save(content)
+        response = self.client.post(
+            "/invoices/upload",
+            files={
+                "file": (
+                    "invoice.xlsx",
+                    content.getvalue(),
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            },
+        )
+
+        self.assertEqual(response.status_code, 201, response.text)
+        invoice = self.client.get(f"/invoices/{response.json()['id']}").json()
+        self.assertEqual(invoice["invoice_number"], "XLSX-1")
+        self.assertEqual(invoice["source_format"], "xlsx")
+
+    def test_impossible_calendar_date_is_not_processed(self) -> None:
+        invalid_date_text = self.ocr_text.replace("2026-10-12", "2026-02-30")
+        with patch.object(routes_invoices, "extract_text", return_value=invalid_date_text):
+            response = self.upload_pdf("invalid-date.pdf")
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json()["processing_status"], "failed")
+        invoice = self.client.get(f"/invoices/{response.json()['id']}").json()
+        self.assertEqual(invoice["invoice_date"], None)
+        self.assertTrue(any("invalid or ambiguous" in str(item).lower() for item in invoice["validation_warnings"]))
+        self.assertIsNone(invoice["ai_analysis"])
+
+    def test_reupload_and_retry_reuse_existing_invoice_id(self) -> None:
+        with patch.object(
+            routes_invoices,
+            "call_invoice_workflow",
+            side_effect=[N8NIntegrationError("workflow offline"), WORKFLOW_RESULT],
+        ):
+            first = self.upload_pdf()
+            repeated = self.upload_pdf()
+        self.assertEqual(first.json()["id"], repeated.json()["id"])
+        self.assertEqual(repeated.json()["invoice_count"], 1)
+
+        with Session(self.engine) as database:
+            invoice_count = len(list(database.scalars(select(Invoice.id)).all()))
+        self.assertEqual(invoice_count, 1)
+        self.assertEqual(repeated.json()["processing_status"], "processed")
+
+    def test_corrupt_csv_is_rejected_without_record(self) -> None:
+        response = self.client.post(
+            "/invoices/upload",
+            files={"file": ("broken.csv", b"\xff\xfe", "text/csv")},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assert_no_upload_artifacts()
 
     def test_upload_over_size_limit_is_rejected(self) -> None:
         with patch.object(routes_invoices, "MAX_UPLOAD_SIZE_BYTES", 8):
@@ -216,7 +318,7 @@ class InvoiceAPITests(unittest.TestCase):
             response = self.upload_pdf()
 
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.json()["processing_status"], "processed")
+        self.assertEqual(response.json()["processing_status"], "failed")
         self.assertIn("no readable text was recognized", response.json()["message"])
 
     def test_upload_survives_ocr_failure_with_failed_status(self) -> None:

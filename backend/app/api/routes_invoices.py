@@ -1,5 +1,7 @@
 from datetime import datetime, timezone
 from decimal import Decimal
+import asyncio
+import hashlib
 from pathlib import Path
 from typing import Any
 import uuid
@@ -21,6 +23,7 @@ from app.config import settings
 from app.db.database import get_db
 from app.db.models import Invoice
 from app.schemas.invoice import (
+    InvoiceFields,
     InvoiceLineItem,
     InvoiceRead,
     InvoiceReviewRequest,
@@ -33,6 +36,17 @@ from app.services.extraction_service import (
     extract_invoice_data as extraction_extract_invoice_data,
 )
 from app.services.ocr_service import extract_text as ocr_extract_text
+from app.services.n8n_service import (
+    N8NIntegrationError,
+    build_invoice_payload,
+    call_invoice_workflow,
+)
+from app.services.tabular_extraction_service import (
+    TabularFileError,
+    extract_csv_invoices,
+    extract_excel_invoices,
+)
+from app.services.validation_service import validate_extracted_invoice
 
 # Module-level exports for configuration and monkey-patching in tests
 UPLOADS_DIR = settings.uploads_dir
@@ -45,11 +59,128 @@ SUPPORTED_FORMATS: dict[str, tuple[str, bytes]] = {
     ".png": ("image/png", b"\x89PNG\r\n\x1a\n"),
     ".jpg": ("image/jpeg", b"\xff\xd8\xff"),
     ".jpeg": ("image/jpeg", b"\xff\xd8\xff"),
+    ".csv": ("text/csv", b""),
+    ".xlsx": ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", b"PK\x03\x04"),
 }
 
 VALID_REVIEW_STATUSES = {"reviewed", "needs_review", "rejected", "pending"}
 
 router = APIRouter(prefix="/invoices", tags=["invoices"])
+
+REQUIRED_WORKFLOW_FIELDS = ("invoice_number", "vendor_name", "invoice_date", "total_amount")
+
+
+def _invoice_fields(invoice: Invoice) -> InvoiceFields:
+    return InvoiceFields.model_validate(
+        {
+            field: getattr(invoice, field)
+            for field in InvoiceFields.model_fields
+        }
+    )
+
+
+def _validation_errors(fields: InvoiceFields, extraction_warnings: list[str]) -> list[str]:
+    errors = [
+        f"Required invoice field '{field}' was not extracted."
+        for field in REQUIRED_WORKFLOW_FIELDS
+        if getattr(fields, field) is None
+    ]
+    warnings = validate_extracted_invoice(fields, extraction_warnings=extraction_warnings)
+    hard_codes = {
+        "amount_mismatch",
+        "date_order_invalid",
+        "negative_amount",
+        "invalid_quantity",
+        "invalid_tax_rate",
+    }
+    errors.extend(
+        warning.message
+        for warning in warnings
+        if warning.severity == "error" or warning.code in hard_codes
+    )
+    for warning in extraction_warnings:
+        message = warning.lower()
+        if (
+            ("invalid or ambiguous" in message or "ambiguous or invalid" in message)
+            and any(key in message for key in ("date", "currency", "amount", "subtotal", "tax", "total"))
+        ):
+            errors.append(warning)
+    return list(dict.fromkeys(errors))
+
+
+def _append_warning(invoice: Invoice, code: str, message: str, field: str | None = None) -> None:
+    warnings = list(invoice.validation_warnings or [])
+    warning = {
+        "field": field,
+        "code": code,
+        "severity": "error" if code in {"validation_error", "n8n_error"} else "warning",
+        "message": message,
+    }
+    if warning not in warnings:
+        warnings.append(warning)
+    invoice.validation_warnings = warnings
+
+
+async def _run_workflow(invoice: Invoice) -> None:
+    fields = _invoice_fields(invoice)
+    extraction_warnings = [
+        warning for warning in (invoice.validation_warnings or []) if isinstance(warning, str)
+    ]
+    local_errors = _validation_errors(fields, extraction_warnings)
+    if local_errors:
+        invoice.processing_status = "failed"
+        invoice.review_status = "needs_review"
+        invoice.n8n_validation = {
+            "status": "invalid",
+            "errors": local_errors,
+            "warnings": [],
+        }
+        for error in local_errors:
+            _append_warning(invoice, "validation_error", error)
+        return
+
+    try:
+        validation, ai_analysis, workflow_warnings, is_valid = await asyncio.to_thread(
+            call_invoice_workflow,
+            build_invoice_payload(
+                invoice.id, invoice.source_format or "", invoice.original_filename, fields
+            ),
+        )
+    except N8NIntegrationError as error:
+        invoice.processing_status = "failed"
+        invoice.review_status = "needs_review"
+        _append_warning(invoice, "n8n_error", str(error))
+        return
+
+    invoice.n8n_validation = validation
+    invoice.ai_analysis = ai_analysis
+    for warning in workflow_warnings:
+        _append_warning(invoice, "n8n_validation_warning", warning)
+    usable_ai_result = (
+        ai_analysis is not None
+        and ai_analysis.get("risk_level", "UNKNOWN") in {"LOW", "MEDIUM", "HIGH", "CRITICAL"}
+    )
+    if not is_valid:
+        for error in validation["errors"]:
+            _append_warning(invoice, "validation_error", str(error))
+    if not is_valid or not usable_ai_result:
+        invoice.processing_status = "failed"
+        invoice.review_status = "needs_review"
+        if is_valid and not usable_ai_result:
+            _append_warning(
+                invoice,
+                "n8n_error",
+                "Gemini analysis output was missing or malformed; manual review is required.",
+            )
+        return
+
+    invoice.processing_status = "processed"
+    if (
+        workflow_warnings
+        or (ai_analysis.get("findings") or [])
+        or ai_analysis.get("risk_level") != "LOW"
+    ):
+        invoice.review_status = "needs_review"
 
 
 def _apply_extraction(invoice: Invoice, extraction: ExtractionResult) -> None:
@@ -142,14 +273,14 @@ async def upload_invoice(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
 ):
-    """Validate uploaded invoice file, store safely, run OCR and extraction pipeline, and persist."""
+    """Validate, extract, validate, and send uploaded invoice records to the configured workflow."""
     filename = file.filename or ""
     ext = Path(filename).suffix.lower()
 
     if ext not in SUPPORTED_FORMATS:
         raise HTTPException(
             status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-            detail=f"Unsupported file type '{ext}'. Supported formats are: PDF, PNG, JPG, JPEG.",
+            detail=f"Unsupported file type '{ext}'. Supported formats are: PDF, PNG, JPG, JPEG, CSV, XLSX.",
         )
 
     content = await file.read()
@@ -169,17 +300,20 @@ async def upload_invoice(
     expected_mime, magic_signature = SUPPORTED_FORMATS[ext]
     content_type = (file.content_type or "").lower().split(";")[0].strip()
     if content_type:
-        if ext in (".jpg", ".jpeg"):
-            valid_mimes = {"image/jpeg", "image/jpg", "image/pjpeg"}
-        else:
-            valid_mimes = {expected_mime}
+        valid_mimes_by_ext = {
+            ".jpg": {"image/jpeg", "image/jpg", "image/pjpeg"},
+            ".jpeg": {"image/jpeg", "image/jpg", "image/pjpeg"},
+            ".csv": {"text/csv", "application/csv", "application/vnd.ms-excel", "text/plain"},
+            ".xlsx": {expected_mime},
+        }
+        valid_mimes = valid_mimes_by_ext.get(ext, {expected_mime})
         if content_type not in valid_mimes:
             raise HTTPException(
                 status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
                 detail="File content type does not match its file extension.",
             )
 
-    if not content.startswith(magic_signature):
+    if magic_signature and not content.startswith(magic_signature):
         raise HTTPException(
             status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
             detail="File contents do not match the expected file signature.",
@@ -187,62 +321,170 @@ async def upload_invoice(
 
     current_uploads_dir = Path(globals().get("UPLOADS_DIR", settings.uploads_dir))
     current_uploads_dir.mkdir(parents=True, exist_ok=True)
+    content_sha256 = hashlib.sha256(content).hexdigest()
+    existing = list(
+        db.scalars(
+            select(Invoice)
+            .where(Invoice.content_sha256 == content_sha256)
+            .order_by(Invoice.id.asc())
+        ).all()
+    )
+    if existing:
+        retryable = [invoice for invoice in existing if invoice.processing_status != "processed"]
+        if retryable:
+            for invoice in retryable:
+                await _run_workflow(invoice)
+            db.commit()
+        statuses = {invoice.processing_status for invoice in existing}
+        processing_status = "processed" if statuses == {"processed"} else "failed"
+        return InvoiceUploadResponse(
+            invoice_id=existing[0].id,
+            id=existing[0].id,
+            invoice_ids=[invoice.id for invoice in existing],
+            invoice_count=len(existing),
+            processing_status=processing_status,
+            message="This file was already uploaded; the existing invoice records were reused.",
+        )
+
     stored_filename = f"{uuid.uuid4().hex}{ext}"
     file_path = current_uploads_dir / stored_filename
     file_path.write_bytes(content)
 
-    invoice = Invoice(
-        original_filename=filename,
-        stored_filename=stored_filename,
-        status="uploaded",
+    if ext in {".csv", ".xlsx"}:
+        try:
+            records = (
+                extract_csv_invoices(file_path)
+                if ext == ".csv"
+                else extract_excel_invoices(file_path)
+            )
+        except TabularFileError as error:
+            file_path.unlink(missing_ok=True)
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=str(error),
+            ) from error
+        prepared_records = [
+            (
+                ExtractionResult(fields=record.fields, validation_warnings=record.warnings),
+                None,
+            )
+            for record in records
+        ]
+    else:
+        ocr_fn = globals().get("extract_text", ocr_extract_text)
+        try:
+            text = ocr_fn(file_path)
+        except (OSError, RuntimeError, ValueError):
+            invoice = Invoice(
+                original_filename=filename,
+                stored_filename=stored_filename,
+                content_sha256=content_sha256,
+                source_format=ext.lstrip("."),
+                processing_status="failed",
+                review_status="needs_review",
+                validation_warnings=[
+                    "The document could not be read by the configured extraction engine. Verify the file or enter its fields manually."
+                ],
+            )
+            db.add(invoice)
+            db.commit()
+            db.refresh(invoice)
+            return InvoiceUploadResponse(
+                invoice_id=invoice.id,
+                id=invoice.id,
+                processing_status="failed",
+                message="Document saved, but text extraction failed.",
+            )
+
+        if not text or not text.strip():
+            invoice = Invoice(
+                original_filename=filename,
+                stored_filename=stored_filename,
+                content_sha256=content_sha256,
+                source_format=ext.lstrip("."),
+                extracted_text=text,
+                processing_status="failed",
+                review_status="needs_review",
+                validation_warnings=[
+                    "No readable text was recognized. Check OCR availability or enter the invoice fields manually."
+                ],
+            )
+            db.add(invoice)
+            db.commit()
+            db.refresh(invoice)
+            return InvoiceUploadResponse(
+                invoice_id=invoice.id,
+                id=invoice.id,
+                processing_status="failed",
+                message="Document was saved, but no readable text was recognized.",
+            )
+
+        extractor_fn = globals().get("extract_invoice_data", extraction_extract_invoice_data)
+        extraction = extractor_fn(text)
+        prepared_records = [(extraction, text)]
+
+    invoices: list[Invoice] = []
+    apply_fn = globals().get("_apply_extraction", _apply_extraction)
+    for extraction, extracted_text in prepared_records:
+        invoice = Invoice(
+            original_filename=filename,
+            stored_filename=stored_filename,
+            content_sha256=content_sha256,
+            source_format=ext.lstrip("."),
+            extracted_text=extracted_text,
+            status="uploaded",
+            processing_status="processing",
+        )
+        apply_fn(invoice, extraction)
+        db.add(invoice)
+        invoices.append(invoice)
+    db.commit()
+    for invoice in invoices:
+        db.refresh(invoice)
+        await _run_workflow(invoice)
+    db.commit()
+    processing_status = (
+        "processed"
+        if all(invoice.processing_status == "processed" for invoice in invoices)
+        else "failed"
+    )
+    first_invoice = invoices[0]
+    return InvoiceUploadResponse(
+        invoice_id=first_invoice.id,
+        id=first_invoice.id,
+        invoice_ids=[invoice.id for invoice in invoices],
+        invoice_count=len(invoices),
+        processing_status=processing_status,
+        message=(
+            "Document uploaded and baseline invoice-field extraction completed; "
+            "n8n processing completed."
+            if processing_status == "processed"
+            else "Document and extracted invoice data were saved, but validation or n8n processing requires review."
+        ),
     )
 
-    ocr_fn = globals().get("extract_text", ocr_extract_text)
-    try:
-        text = ocr_fn(file_path)
-    except Exception:
-        invoice.processing_status = "failed"
-        invoice.review_status = "needs_review"
-        invoice.validation_warnings = ["Automated document processing failed; manual entry or re-upload is required."]
-        db.add(invoice)
-        db.commit()
-        db.refresh(invoice)
-        return InvoiceUploadResponse(
-            invoice_id=invoice.id,
-            id=invoice.id,
-            processing_status="failed",
-            message="Document saved, but automated text extraction failed.",
-        )
 
-    invoice.extracted_text = text
-    if not text or not text.strip():
-        invoice.processing_status = "processed"
-        invoice.review_status = "needs_review"
-        invoice.validation_warnings = ["No readable text was recognized from the document; manual entry is required."]
-        db.add(invoice)
-        db.commit()
-        db.refresh(invoice)
-        return InvoiceUploadResponse(
-            invoice_id=invoice.id,
-            id=invoice.id,
-            processing_status="processed",
-            message="Document uploaded, but no readable text was recognized.",
+@router.post("/{invoice_id}/retry", response_model=InvoiceUploadResponse)
+async def retry_invoice_processing(invoice_id: int, db: Session = Depends(get_db)):
+    """Retry workflow processing for an existing record without creating a duplicate invoice."""
+    invoice = db.get(Invoice, invoice_id)
+    if not invoice:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Invoice not found.",
         )
-
-    extractor_fn = globals().get("extract_invoice_data", extraction_extract_invoice_data)
-    extraction = extractor_fn(text)
-    apply_fn = globals().get("_apply_extraction", _apply_extraction)
-    apply_fn(invoice, extraction)
-    invoice.processing_status = "processed"
-    db.add(invoice)
+    await _run_workflow(invoice)
     db.commit()
     db.refresh(invoice)
-
     return InvoiceUploadResponse(
         invoice_id=invoice.id,
         id=invoice.id,
-        processing_status="processed",
-        message="Document uploaded and baseline invoice-field extraction completed.",
+        processing_status=invoice.processing_status,
+        message=(
+            "Invoice workflow processing completed."
+            if invoice.processing_status == "processed"
+            else "Invoice data was preserved, but validation or workflow processing still requires review."
+        ),
     )
 
 

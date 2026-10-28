@@ -14,7 +14,7 @@ export default function UploadPage() {
   async function submit() {
     if (!file || busy) return
     setBusy(true); setProg(0)
-    try { const record = await invoiceApi.upload(file, setProg); toast.success('Invoice added to your workspace.'); nav(`/invoices/${record.id}/review`) }
+    try { const record = await invoiceApi.upload(file, setProg); if (record.processingStatus === 'failed') toast.error(record.processingMessage || 'Invoice saved, but processing needs review.'); else toast.success(`${record.uploadCount > 1 ? `${record.uploadCount} invoices added` : 'Invoice added'} to your workspace.`); nav(`/invoices/${record.id}/review`) }
     catch (e) { const message = errMsg(e); setErr(message); toast.error(message) }
     finally { setBusy(false) }
   }
@@ -24,8 +24,8 @@ export default function UploadPage() {
       <section className="panel"><div className="panel-title-row"><div><h2 className="panel-title">Add your document</h2><p className="panel-subtitle">Choose a file from your device or drop it below.</p></div><span className="status-badge badge-blue">Step 1 of 2</span></div>
         <div className={`dropzone ${drag ? 'dragging' : ''}`} onDragOver={e => { e.preventDefault(); setDrag(true) }} onDragLeave={e => { if (!e.currentTarget.contains(e.relatedTarget)) setDrag(false) }} onDrop={e => { e.preventDefault(); setDrag(false); pick(e.dataTransfer.files?.[0]) }}>
           <div className="upload-icon"><UploadCloud size={29}/></div><h2>Drop your invoice here</h2><p>Drag a document into this area, or browse your device to select a file for upload.</p>
-          <button className="btn btn-p" onClick={() => ref.current?.click()}><FileText size={15}/>Browse files</button><input ref={ref} type="file" hidden accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg" onChange={e => { pick(e.target.files?.[0]); e.target.value = '' }} aria-label="Select invoice file"/>
-          <div className="tiny-label mt-4">Supported formats: PDF, PNG, JPG, JPEG · Maximum file size: {config.maxMB} MB</div>
+          <button className="btn btn-p" onClick={() => ref.current?.click()}><FileText size={15}/>Browse files</button><input ref={ref} type="file" hidden accept=".pdf,.png,.jpg,.jpeg,.csv,.xlsx,application/pdf,image/png,image/jpeg,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onChange={e => { pick(e.target.files?.[0]); e.target.value = '' }} aria-label="Select invoice file"/>
+          <div className="tiny-label mt-4">Supported formats: PDF, PNG, JPG, JPEG, CSV, XLSX · Maximum file size: {config.maxMB} MB</div>
         </div>
         {err && <div className="notice error mt-3" role="alert"><Info size={16}/><span>{err}</span></div>}
         {file && <div className="file-chip"><span className="file-icon">{file.type === 'application/pdf' ? <FileText size={20}/> : <FileImage size={20}/>}</span><div className="file-info"><b>{file.name}</b><small>{sizeStr(file.size)} · {file.type || 'Unknown file type'}{busy && prog != null ? prog >= 100 ? ' · Processing invoice…' : ` · Uploading ${prog}%` : ' · Ready to upload'}</small>{busy && <div className="h-1.5 rounded-full bg-slate-100 mt-2 overflow-hidden"><div className="h-full bg-violet-500 transition-all" style={{ width: `${prog || 0}%` }}/></div>}</div><button className="icon-button" disabled={busy} aria-label="Remove selected file" onClick={() => { setFile(null); setErr(null) }}><X size={16}/></button></div>}

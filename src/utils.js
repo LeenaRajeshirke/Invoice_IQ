@@ -10,11 +10,18 @@ export const money = (value, currency = 'INR') => {
 export const fmtDate = value => { if (!value) return '—'; const date = new Date(value); return Number.isNaN(date.getTime()) ? '—' : date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) }
 export const confPct = value => value == null || value === '' || Number.isNaN(Number(value)) ? null : Math.round(Number(value) <= 1 ? Number(value) * 100 : Number(value))
 export const confLevel = pct => pct == null ? 'na' : pct >= config.high ? 'high' : pct >= config.mid ? 'mid' : 'low'
-const ALLOWED = { pdf: ['application/pdf'], png: ['image/png'], jpg: ['image/jpeg'], jpeg: ['image/jpeg'] }
+const ALLOWED = {
+  pdf: ['application/pdf'],
+  png: ['image/png'],
+  jpg: ['image/jpeg'],
+  jpeg: ['image/jpeg'],
+  csv: ['text/csv', 'application/csv', 'application/vnd.ms-excel', 'text/plain'],
+  xlsx: ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+}
 export function validateFile(file) {
   if (!file?.name) return 'Choose a file to upload.'
   const ext = file.name.split('.').pop().toLowerCase()
-  if (!ALLOWED[ext]) return 'Unsupported file type. Use PDF, PNG, JPG or JPEG.'
+  if (!ALLOWED[ext]) return 'Unsupported file type. Use PDF, PNG, JPG, JPEG, CSV or XLSX.'
   if (file.type && !ALLOWED[ext].includes(file.type)) return 'File content type does not match its extension.'
   if (file.size > config.maxMB * 1024 * 1024) return `File is too large. Maximum size is ${config.maxMB} MB.`
   if (file.size === 0) return 'File is empty.'

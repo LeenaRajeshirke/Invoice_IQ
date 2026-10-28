@@ -18,6 +18,8 @@ class Invoice(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     original_filename: Mapped[str] = mapped_column(String(255), nullable=False)
     stored_filename: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    content_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
+    source_format: Mapped[str | None] = mapped_column(String(10), nullable=True)
     extracted_text: Mapped[str | None] = mapped_column(Text, nullable=True)
     invoice_number: Mapped[str | None] = mapped_column(String(255), nullable=True)
     vendor_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
@@ -39,6 +41,8 @@ class Invoice(Base):
     line_items: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list, nullable=False)
     confidence: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     validation_warnings: Mapped[list[Any]] = mapped_column(JSON, default=list, nullable=False)
+    n8n_validation: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    ai_analysis: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     status: Mapped[str] = mapped_column(String(30), default="uploaded", nullable=False)
     processing_status: Mapped[str] = mapped_column(
         String(30), default="placeholder", nullable=False

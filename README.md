@@ -34,8 +34,7 @@ From the root project directory:
 # 1. Install dependencies
 npm install
 
-# 2. Configure environment (points to live FastAPI backend)
-# .env is already configured with:
+# 2. Configure frontend environment (points to live FastAPI backend)
 # VITE_API_MODE=live
 # VITE_API_BASE_URL=http://localhost:8000
 # VITE_MAX_UPLOAD_MB=10
@@ -45,6 +44,21 @@ npm run dev
 ```
 
 Open `http://localhost:5173` in your browser.
+
+### C. Configure n8n Workflow 1
+
+Copy `.env.example` to a private backend environment file or define its `N8N_...` variables in the backend process environment. The backend reads these variables when it starts; do not prefix them with `VITE_` or expose them to the browser.
+
+- `N8N_INVOICE_WEBHOOK_URL`: the exact production or test webhook URL displayed by your `InvoiceIQ - WF1 - Multi-Format AI Invoice Processing` workflow. The sample URL is only a placeholder.
+- `N8N_INVOICE_WEBHOOK_SECRET`: the secret for the workflow's Header Auth credential. The backend sends it as `X-Webhook-Secret`.
+
+For local development with n8n on the host, use the actual webhook URL from the active workflow (usually on port `5678`) and make sure the workflow is active or listening in test mode as appropriate. Start n8n and the FastAPI backend independently. If FastAPI runs in Docker, `localhost` refers to the FastAPI container; set the URL to the n8n service name and port on a shared Docker network instead. This repository does not include a Docker Compose setup or the n8n workflow export.
+
+The backend sends structured invoice JSON, not the uploaded binary. It persists extracted invoice data before calling n8n, and a failed workflow call can be retried from that invoice's Review screen without creating another record. An absent URL/secret or an unusable workflow response is reported as a failed processing state; extraction is retained for review. The workflow should return deterministic validation under `validation` (including `status` and any `errors`/`warnings`) and AI analysis under `ai_analysis` or a text/JSON output field. Gemini findings remain advisory. Confirm the exact response from both IF branches against the running workflow; no exported workflow or sample response is included in this repository.
+
+Supported uploads are PDF, JPG/JPEG, PNG, CSV, and XLSX. CSV and XLSX use one invoice per data row, with the first row as recognized column headers; multiple worksheets are read. CSV/XLSX parsing is deterministic and does not use OCR. PDF and image OCR relies on the existing RapidOCR capability; scanned PDF/image extraction requires a working OCR runtime. XLSX parsing requires the `openpyxl` dependency from `backend/requirements.txt`.
+
+To smoke-test the live integration, configure the URL and secret only in the backend environment, start the workflow and backend, upload an invoice through the UI, and check its Review screen for extraction, deterministic workflow validation, and AI analysis. Test the invalid-validation IF branch with a deliberately incomplete test invoice and confirm it is not marked processed. Stop n8n or use an invalid secret to confirm failures are surfaced and that **Retry workflow** reuses the saved invoice.
 
 To run a production build:
 ```bash

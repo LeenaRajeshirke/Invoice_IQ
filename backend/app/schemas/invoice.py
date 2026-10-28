@@ -81,11 +81,14 @@ class InvoiceRead(InvoiceCreate):
 
     id: int
     extracted_text: str | None = None
+    source_format: str | None = None
     confidence: dict[str, float] | None = None
+    n8n_validation: dict[str, Any] | None = None
+    ai_analysis: dict[str, Any] | None = None
     processing_status: str = "placeholder"
     review_status: str = "pending"
     status: str = "uploaded"
-    validation_warnings: list[str] = Field(default_factory=list)
+    validation_warnings: list[Any] = Field(default_factory=list)
     created_at: datetime | None = None
     updated_at: datetime | None = None
     original_file_url: str | None = None
@@ -98,6 +101,8 @@ class InvoiceUploadResponse(BaseModel):
     id: int
     processing_status: str
     message: str
+    invoice_ids: list[int] = Field(default_factory=list)
+    invoice_count: int = 1
 
 
 class InvoiceReviewRequest(BaseModel):
@@ -142,4 +147,3 @@ class InvoiceUpdate(BaseModel):
     amountPaid: Decimal | None = None
     balanceDue: Decimal | None = None
     lineItems: list[dict[str, Any]] | list[Any] | None = None
-

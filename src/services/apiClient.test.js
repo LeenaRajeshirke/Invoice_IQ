@@ -56,7 +56,7 @@ test('createLiveApi - upload posts multipart file and retrieves created invoice'
   const http = {
     post: async (url, formData) => {
       calls.push({ method: 'POST', url, formData })
-      return { data: { invoice_id: 15, processing_status: 'processed' } }
+      return { data: { invoice_id: 15, processing_status: 'processed', invoice_count: 2, message: 'Workflow complete.' } }
     },
     get: async url => {
       calls.push({ method: 'GET', url })
@@ -75,6 +75,8 @@ test('createLiveApi - upload posts multipart file and retrieves created invoice'
   assert.equal(record.id, '15')
   assert.equal(record.invoiceNumber, 'INV-NEW')
   assert.equal(record.vendor.name, 'New Vendor')
+  assert.equal(record.uploadCount, 2)
+  assert.equal(record.processingMessage, 'Workflow complete.')
 })
 
 test('createLiveApi - save sends PATCH /invoices/{id} with mapped payload', async () => {
@@ -117,6 +119,26 @@ test('createLiveApi - setReview sends POST /invoices/{id}/review', async () => {
   const reviewed = await api.setReview('15', 'reviewed')
   assert.deepEqual(reviewPayload, { status: 'reviewed' })
   assert.equal(reviewed.reviewStatus, 'reviewed')
+})
+
+test('createLiveApi - retry reuses invoice record and exposes processing message', async () => {
+  const calls = []
+  const http = {
+    post: async url => {
+      calls.push(url)
+      return { data: { message: 'Retry complete.' } }
+    },
+    get: async url => {
+      calls.push(url)
+      return { data: { id: 21, processing_status: 'processed' } }
+    },
+  }
+  const api = createLiveApi(http)
+  const invoice = await api.retry(21)
+  assert.deepEqual(calls, ['/invoices/21/retry', '/invoices/21'])
+  assert.equal(invoice.id, '21')
+  assert.equal(invoice.processingStatus, 'completed')
+  assert.equal(invoice.processingMessage, 'Retry complete.')
 })
 
 test('createLiveApi - getFile fetches blob from /invoices/{id}/file', async () => {

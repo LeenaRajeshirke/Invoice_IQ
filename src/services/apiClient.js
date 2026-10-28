@@ -30,7 +30,20 @@ export function createLiveApi(http) {
       const id = response.data?.invoice_id ?? response.data?.id
       if (id == null) throw new Error('Malformed invoice upload response.')
       const invoiceResponse = await http.get(`/invoices/${encode(id)}`)
-      return mapInvoice(invoiceResponse.data)
+      return {
+        ...mapInvoice(invoiceResponse.data),
+        uploadCount: response.data?.invoice_count ?? 1,
+        processingMessage: response.data?.message ?? '',
+      }
+    },
+
+    retry: async id => {
+      const result = await http.post(`/invoices/${encode(id)}/retry`)
+      const invoice = await http.get(`/invoices/${encode(id)}`)
+      return {
+        ...mapInvoice(invoice.data),
+        processingMessage: result.data?.message ?? '',
+      }
     },
 
     save: (id, invoice) => http.patch(

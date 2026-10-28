@@ -97,6 +97,10 @@ export function mapInvoice(record) {
     createdAt: value(record, 'createdAt', 'created_at'),
     updatedAt: value(record, 'updatedAt', 'updated_at'),
     originalFileUrl: value(record, 'originalFileUrl', 'original_file_url'),
+    originalFilename: value(record, 'originalFilename', 'original_filename'),
+    sourceFormat: value(record, 'sourceFormat', 'source_format'),
+    n8nValidation: value(record, 'n8nValidation', 'n8n_validation'),
+    aiAnalysis: value(record, 'aiAnalysis', 'ai_analysis'),
   }
 }
 

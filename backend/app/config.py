@@ -28,6 +28,8 @@ class Settings:
     )
     max_upload_size_bytes: int = int(os.getenv("INVOICEIQ_MAX_UPLOAD_MB", "10")) * 1024 * 1024
     cors_origins: tuple[str, ...] = _cors_origins()
+    n8n_invoice_webhook_url: str | None = os.getenv("N8N_INVOICE_WEBHOOK_URL")
+    n8n_invoice_webhook_secret: str | None = os.getenv("N8N_INVOICE_WEBHOOK_SECRET")
 
 
 settings = Settings()

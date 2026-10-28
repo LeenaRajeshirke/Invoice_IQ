@@ -24,17 +24,31 @@ def get_db() -> Generator[Session, None, None]:
 
 
 def _migrate_existing_invoice_table() -> None:
-    """Add the discount field to databases created by the earlier invoice schema."""
+    """Add fields introduced after the initial invoice schema."""
     inspector = inspect(engine)
     if "invoices" not in inspector.get_table_names():
         return
 
     columns = {column["name"] for column in inspector.get_columns("invoices")}
-    if "discount_amount" not in columns:
-        with engine.begin() as connection:
-            connection.execute(
-                text("ALTER TABLE invoices ADD COLUMN discount_amount NUMERIC(12, 2)")
+    additions = {
+        "discount_amount": "NUMERIC(12, 2)",
+        "content_sha256": "VARCHAR(64)",
+        "source_format": "VARCHAR(10)",
+        "n8n_validation": "JSON",
+        "ai_analysis": "JSON",
+    }
+    with engine.begin() as connection:
+        for column, sql_type in additions.items():
+            if column not in columns:
+                connection.execute(
+                    text(f"ALTER TABLE invoices ADD COLUMN {column} {sql_type}")
+                )
+        connection.execute(
+            text(
+                "CREATE INDEX IF NOT EXISTS "
+                "ix_invoices_content_sha256 ON invoices (content_sha256)"
             )
+        )
 
 
 def init_db() -> None:
