@@ -1,0 +1,640 @@
+{
+  "synthetic_001.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Aster Office Goods",
+    "invoice_number": "IQ-SYN-0001",
+    "invoice_date": "2026-01-05",
+    "due_date": "2026-01-19",
+    "currency": "USD",
+    "subtotal": "12.50",
+    "tax_amount": "0.00",
+    "discount_amount": null,
+    "total_amount": "12.50",
+    "line_items_count": 1,
+    "line_items": [
+      {
+        "description": "Archive Storage Box",
+        "quantity": "1",
+        "unit_price": "12.50",
+        "total_amount": "12.50"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_002.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Blue Finch Software",
+    "invoice_number": "IQ-SYN-0002",
+    "invoice_date": "2026-01-12",
+    "due_date": "2026-02-02",
+    "currency": "EUR",
+    "subtotal": "98.50",
+    "tax_amount": "4.92",
+    "discount_amount": "4.92",
+    "total_amount": "98.50",
+    "line_items_count": 2,
+    "line_items": [
+      {
+        "description": "Consulting Service",
+        "quantity": "2",
+        "unit_price": "15.50",
+        "total_amount": "31.00"
+      },
+      {
+        "description": "Delivery Charge",
+        "quantity": "3",
+        "unit_price": "22.50",
+        "total_amount": "67.50"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_003.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Cedar Ridge Freight",
+    "invoice_number": "IQ-SYN-0003",
+    "invoice_date": "2026-01-19",
+    "due_date": "2026-02-16",
+    "currency": "GBP",
+    "subtotal": "320.00",
+    "tax_amount": "25.60",
+    "discount_amount": null,
+    "total_amount": "345.60",
+    "line_items_count": 3,
+    "line_items": [
+      {
+        "description": "Delivery Charge",
+        "quantity": "3",
+        "unit_price": "18.50",
+        "total_amount": "55.50"
+      },
+      {
+        "description": "Equipment Rental",
+        "quantity": "4",
+        "unit_price": "25.50",
+        "total_amount": "102.00"
+      },
+      {
+        "description": "Filter Cartridge",
+        "quantity": "5",
+        "unit_price": "32.50",
+        "total_amount": "162.50"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_004.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Delta Workshop Supply",
+    "invoice_number": "IQ-SYN-0004",
+    "invoice_date": "2026-01-26",
+    "due_date": "2026-02-09",
+    "currency": "CAD",
+    "subtotal": "86.00",
+    "tax_amount": "8.60",
+    "discount_amount": null,
+    "total_amount": "94.60",
+    "line_items_count": 1,
+    "line_items": [
+      {
+        "description": "Equipment Rental",
+        "quantity": "4",
+        "unit_price": "21.50",
+        "total_amount": "86.00"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_005.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Evergreen Design House",
+    "invoice_number": "IQ-SYN-0005",
+    "invoice_date": "2026-02-02",
+    "due_date": "2026-02-23",
+    "currency": "AUD",
+    "subtotal": "154.00",
+    "tax_amount": "30.80",
+    "discount_amount": null,
+    "total_amount": "184.80",
+    "line_items_count": 2,
+    "line_items": [
+      {
+        "description": "Filter Cartridge",
+        "quantity": "5",
+        "unit_price": "24.50",
+        "total_amount": "122.50"
+      },
+      {
+        "description": "Graphic Design Package",
+        "quantity": "1",
+        "unit_price": "31.50",
+        "total_amount": "31.50"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_006.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Foxglove Catering",
+    "invoice_number": "IQ-SYN-0006",
+    "invoice_date": "2026-02-09",
+    "due_date": "2026-03-09",
+    "currency": "EUR",
+    "subtotal": "221.00",
+    "tax_amount": "0.00",
+    "discount_amount": "11.05",
+    "total_amount": "209.95",
+    "line_items_count": 3,
+    "line_items": [
+      {
+        "description": "Graphic Design Package",
+        "quantity": "1",
+        "unit_price": "27.50",
+        "total_amount": "27.50"
+      },
+      {
+        "description": "Network Adapter",
+        "quantity": "2",
+        "unit_price": "34.50",
+        "total_amount": "69.00"
+      },
+      {
+        "description": "Workshop Materials",
+        "quantity": "3",
+        "unit_price": "41.50",
+        "total_amount": "124.50"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_007.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Granite Peak Services",
+    "invoice_number": "IQ-SYN-0007",
+    "invoice_date": "2026-02-16",
+    "due_date": "2026-03-02",
+    "currency": "USD",
+    "subtotal": "61.00",
+    "tax_amount": "3.05",
+    "discount_amount": null,
+    "total_amount": "64.05",
+    "line_items_count": 1,
+    "line_items": [
+      {
+        "description": "Network Adapter",
+        "quantity": "2",
+        "unit_price": "30.50",
+        "total_amount": "61.00"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_008.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Harborlight Components",
+    "invoice_number": "IQ-SYN-0008",
+    "invoice_date": "2026-02-23",
+    "due_date": "2026-03-16",
+    "currency": "INR",
+    "subtotal": "262.50",
+    "tax_amount": "21.00",
+    "discount_amount": null,
+    "total_amount": "283.50",
+    "line_items_count": 2,
+    "line_items": [
+      {
+        "description": "Workshop Materials",
+        "quantity": "3",
+        "unit_price": "33.50",
+        "total_amount": "100.50"
+      },
+      {
+        "description": "Archive Storage Box",
+        "quantity": "4",
+        "unit_price": "40.50",
+        "total_amount": "162.00"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_009.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Aster Office Goods",
+    "invoice_number": "IQ-SYN-0009",
+    "invoice_date": "2026-03-02",
+    "due_date": "2026-03-30",
+    "currency": "USD",
+    "subtotal": "414.00",
+    "tax_amount": "41.40",
+    "discount_amount": null,
+    "total_amount": "465.40",
+    "line_items_count": 3,
+    "line_items": [
+      {
+        "description": "Archive Storage Box",
+        "quantity": "4",
+        "unit_price": "36.50",
+        "total_amount": "146.00"
+      },
+      {
+        "description": "Consulting Service",
+        "quantity": "5",
+        "unit_price": "43.50",
+        "total_amount": "217.50"
+      },
+      {
+        "description": "Delivery Charge",
+        "quantity": "1",
+        "unit_price": "50.50",
+        "total_amount": "50.50"
+      }
+    ],
+    "arithmetic_consistent": false
+  },
+  "synthetic_010.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Blue Finch Software",
+    "invoice_number": "IQ-SYN-0010",
+    "invoice_date": "2026-03-09",
+    "due_date": "2026-03-23",
+    "currency": "EUR",
+    "subtotal": "197.50",
+    "tax_amount": "39.50",
+    "discount_amount": "9.88",
+    "total_amount": "227.12",
+    "line_items_count": 1,
+    "line_items": [
+      {
+        "description": "Consulting Service",
+        "quantity": "5",
+        "unit_price": "39.50",
+        "total_amount": "197.50"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_011.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Cedar Ridge Freight",
+    "invoice_number": "IQ-SYN-0011",
+    "invoice_date": "2026-03-16",
+    "due_date": "2026-04-06",
+    "currency": "GBP",
+    "subtotal": "141.50",
+    "tax_amount": "0.00",
+    "discount_amount": null,
+    "total_amount": "141.50",
+    "line_items_count": 2,
+    "line_items": [
+      {
+        "description": "Delivery Charge",
+        "quantity": "1",
+        "unit_price": "42.50",
+        "total_amount": "42.50"
+      },
+      {
+        "description": "Equipment Rental",
+        "quantity": "2",
+        "unit_price": "49.50",
+        "total_amount": "99.00"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_012.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Delta Workshop Supply",
+    "invoice_number": "IQ-SYN-0012",
+    "invoice_date": "2026-03-23",
+    "due_date": "2026-04-20",
+    "currency": "CAD",
+    "subtotal": "486.50",
+    "tax_amount": "24.32",
+    "discount_amount": null,
+    "total_amount": "510.82",
+    "line_items_count": 3,
+    "line_items": [
+      {
+        "description": "Equipment Rental",
+        "quantity": "2",
+        "unit_price": "45.50",
+        "total_amount": "91.00"
+      },
+      {
+        "description": "Filter Cartridge",
+        "quantity": "3",
+        "unit_price": "52.50",
+        "total_amount": "157.50"
+      },
+      {
+        "description": "Graphic Design Package",
+        "quantity": "4",
+        "unit_price": "59.50",
+        "total_amount": "238.00"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_013.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Evergreen Design House",
+    "invoice_number": "IQ-SYN-0013",
+    "invoice_date": "2026-03-30",
+    "due_date": "2026-04-13",
+    "currency": "AUD",
+    "subtotal": "145.50",
+    "tax_amount": "11.64",
+    "discount_amount": null,
+    "total_amount": "157.14",
+    "line_items_count": 1,
+    "line_items": [
+      {
+        "description": "Filter Cartridge",
+        "quantity": "3",
+        "unit_price": "48.50",
+        "total_amount": "145.50"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_014.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Foxglove Catering",
+    "invoice_number": "IQ-SYN-0014",
+    "invoice_date": "2026-04-06",
+    "due_date": "2026-04-27",
+    "currency": "EUR",
+    "subtotal": "498.50",
+    "tax_amount": "49.85",
+    "discount_amount": "24.92",
+    "total_amount": "523.43",
+    "line_items_count": 2,
+    "line_items": [
+      {
+        "description": "Graphic Design Package",
+        "quantity": "4",
+        "unit_price": "51.50",
+        "total_amount": "206.00"
+      },
+      {
+        "description": "Network Adapter",
+        "quantity": "5",
+        "unit_price": "58.50",
+        "total_amount": "292.50"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_015.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Granite Peak Services",
+    "invoice_number": "IQ-SYN-0015",
+    "invoice_date": "2026-04-13",
+    "due_date": "2026-05-11",
+    "currency": "USD",
+    "subtotal": "471.00",
+    "tax_amount": "94.20",
+    "discount_amount": null,
+    "total_amount": "565.20",
+    "line_items_count": 3,
+    "line_items": [
+      {
+        "description": "Network Adapter",
+        "quantity": "5",
+        "unit_price": "54.50",
+        "total_amount": "272.50"
+      },
+      {
+        "description": "Workshop Materials",
+        "quantity": "1",
+        "unit_price": "61.50",
+        "total_amount": "61.50"
+      },
+      {
+        "description": "Archive Storage Box",
+        "quantity": "2",
+        "unit_price": "68.50",
+        "total_amount": "137.00"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_016.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Harborlight Components",
+    "invoice_number": "IQ-SYN-0016",
+    "invoice_date": "2026-04-20",
+    "due_date": "2026-05-04",
+    "currency": "INR",
+    "subtotal": "57.50",
+    "tax_amount": "0.00",
+    "discount_amount": null,
+    "total_amount": "57.50",
+    "line_items_count": 1,
+    "line_items": [
+      {
+        "description": "Workshop Materials",
+        "quantity": "1",
+        "unit_price": "57.50",
+        "total_amount": "57.50"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_017.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Aster Office Goods",
+    "invoice_number": "IQ-SYN-0017",
+    "invoice_date": "2026-04-27",
+    "due_date": "2026-05-18",
+    "currency": "USD",
+    "subtotal": "323.50",
+    "tax_amount": "16.18",
+    "discount_amount": null,
+    "total_amount": "339.68",
+    "line_items_count": 2,
+    "line_items": [
+      {
+        "description": "Archive Storage Box",
+        "quantity": "2",
+        "unit_price": "60.50",
+        "total_amount": "121.00"
+      },
+      {
+        "description": "Consulting Service",
+        "quantity": "3",
+        "unit_price": "67.50",
+        "total_amount": "202.50"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_018.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Blue Finch Software",
+    "invoice_number": "IQ-SYN-0018",
+    "invoice_date": "2026-05-04",
+    "due_date": "2026-06-01",
+    "currency": "EUR",
+    "subtotal": "860.00",
+    "tax_amount": "68.80",
+    "discount_amount": "43.00",
+    "total_amount": "885.80",
+    "line_items_count": 3,
+    "line_items": [
+      {
+        "description": "Consulting Service",
+        "quantity": "3",
+        "unit_price": "63.50",
+        "total_amount": "190.50"
+      },
+      {
+        "description": "Delivery Charge",
+        "quantity": "4",
+        "unit_price": "70.50",
+        "total_amount": "282.00"
+      },
+      {
+        "description": "Equipment Rental",
+        "quantity": "5",
+        "unit_price": "77.50",
+        "total_amount": "387.50"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_019.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Cedar Ridge Freight",
+    "invoice_number": "IQ-SYN-0019",
+    "invoice_date": "2026-05-11",
+    "due_date": "2026-05-25",
+    "currency": "GBP",
+    "subtotal": "266.00",
+    "tax_amount": "26.60",
+    "discount_amount": null,
+    "total_amount": "302.60",
+    "line_items_count": 1,
+    "line_items": [
+      {
+        "description": "Delivery Charge",
+        "quantity": "4",
+        "unit_price": "66.50",
+        "total_amount": "266.00"
+      }
+    ],
+    "arithmetic_consistent": false
+  },
+  "synthetic_020.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Delta Workshop Supply",
+    "invoice_number": "IQ-SYN-0020",
+    "invoice_date": "2026-05-18",
+    "due_date": "2026-06-08",
+    "currency": "CAD",
+    "subtotal": "424.00",
+    "tax_amount": "84.80",
+    "discount_amount": null,
+    "total_amount": "508.80",
+    "line_items_count": 2,
+    "line_items": [
+      {
+        "description": "Equipment Rental",
+        "quantity": "5",
+        "unit_price": "69.50",
+        "total_amount": "347.50"
+      },
+      {
+        "description": "Filter Cartridge",
+        "quantity": "1",
+        "unit_price": "76.50",
+        "total_amount": "76.50"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_021.png": {
+    "file_type": "image_png",
+    "vendor_name": "Evergreen Design House",
+    "invoice_number": "IQ-SYN-0021",
+    "invoice_date": "2026-05-25",
+    "due_date": "2026-06-22",
+    "currency": "AUD",
+    "subtotal": "491.00",
+    "tax_amount": "0.00",
+    "discount_amount": null,
+    "total_amount": "491.00",
+    "line_items_count": 3,
+    "line_items": [
+      {
+        "description": "Filter Cartridge",
+        "quantity": "1",
+        "unit_price": "72.50",
+        "total_amount": "72.50"
+      },
+      {
+        "description": "Graphic Design Package",
+        "quantity": "2",
+        "unit_price": "79.50",
+        "total_amount": "159.00"
+      },
+      {
+        "description": "Network Adapter",
+        "quantity": "3",
+        "unit_price": "86.50",
+        "total_amount": "259.50"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_022.jpg": {
+    "file_type": "image_jpeg",
+    "vendor_name": "Foxglove Catering",
+    "invoice_number": "IQ-SYN-0022",
+    "invoice_date": "2026-06-01",
+    "due_date": "2026-06-15",
+    "currency": "EUR",
+    "subtotal": "151.00",
+    "tax_amount": "7.55",
+    "discount_amount": "7.55",
+    "total_amount": "151.00",
+    "line_items_count": 1,
+    "line_items": [
+      {
+        "description": "Graphic Design Package",
+        "quantity": "2",
+        "unit_price": "75.50",
+        "total_amount": "151.00"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "synthetic_023_scanned.pdf": {
+    "file_type": "scanned_pdf",
+    "vendor_name": "Granite Peak Services",
+    "invoice_number": "IQ-SYN-0023",
+    "invoice_date": "2026-06-08",
+    "due_date": "2026-06-29",
+    "currency": "USD",
+    "subtotal": "577.50",
+    "tax_amount": "46.20",
+    "discount_amount": null,
+    "total_amount": "623.70",
+    "line_items_count": 2,
+    "line_items": [
+      {
+        "description": "Network Adapter",
+        "quantity": "3",
+        "unit_price": "78.50",
+        "total_amount": "235.50"
+      },
+      {
+        "description": "Workshop Materials",
+        "quantity": "4",
+        "unit_price": "85.50",
+        "total_amount": "342.00"
+      }
+    ],
+    "arithmetic_consistent": true
+  }
+}

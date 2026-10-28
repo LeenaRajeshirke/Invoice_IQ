@@ -55,6 +55,92 @@ Paid
 
 
 class InvoiceExtractionTests(unittest.TestCase):
+    def test_extracts_party_addresses_tax_ids_terms_and_line_tax_rate(self) -> None:
+        text = """From:
+Acme Supplies
+12 Main Street
+Vendor Tax ID: VEND-123
+To: Northwind Ltd
+8 Market Road
+Customer Tax ID: CUST-456
+Invoice Number: AC-204
+Invoice Date: 2026-10-12
+Due Date: 2026-10-30
+Payment Terms: Net 18
+Currency: USD
+Subtotal: 20.00
+Tax: 1.00
+Total: 21.00
+Widget | 2 | 10.00 | 5% | 21.00
+"""
+
+        result = extract_invoice_data(text)
+
+        self.assertEqual(result.fields.vendor_name, "Acme Supplies")
+        self.assertEqual(result.fields.vendor_address, "12 Main Street")
+        self.assertEqual(result.fields.vendor_tax_id, "VEND-123")
+        self.assertEqual(result.fields.customer_name, "Northwind Ltd")
+        self.assertEqual(result.fields.customer_address, "8 Market Road")
+        self.assertEqual(result.fields.customer_tax_id, "CUST-456")
+        self.assertEqual(result.fields.payment_terms, "Net 18")
+        self.assertEqual(result.fields.line_items[0].tax_rate, Decimal("5"))
+
+    def test_synthetic_fixture_field_exact_match(self) -> None:
+        fixtures = [
+            (
+                """Vendor: Northwind Office Supply
+Invoice Number: INV-2026-041
+Invoice Date: October 12, 2026
+Due Date: October 26, 2026
+Currency: USD
+Subtotal: 1,234.50
+Tax: 96.76
+Total: 1,331.26
+""",
+                {
+                    "vendor_name": "Northwind Office Supply",
+                    "invoice_number": "INV-2026-041",
+                    "invoice_date": date(2026, 10, 12),
+                    "due_date": date(2026, 10, 26),
+                    "currency": "USD",
+                    "subtotal": Decimal("1234.50"),
+                    "tax_amount": Decimal("96.76"),
+                    "total_amount": Decimal("1331.26"),
+                },
+            ),
+            (
+                """Vendor: Example Services
+Invoice No: ES-9
+Date of Invoice: 2026-02-03
+Payment Due: 2026-02-20
+Currency: EUR
+Net Subtotal: 100.00
+Sales Tax: 20.00
+Less Discount: 5.00
+Grand Total: 115.00
+""",
+                {
+                    "vendor_name": "Example Services",
+                    "invoice_number": "ES-9",
+                    "invoice_date": date(2026, 2, 3),
+                    "due_date": date(2026, 2, 20),
+                    "currency": "EUR",
+                    "subtotal": Decimal("100.00"),
+                    "tax_amount": Decimal("20.00"),
+                    "total_amount": Decimal("115.00"),
+                },
+            ),
+        ]
+        matches = 0
+        total = 0
+        for text, expected in fixtures:
+            actual = extract_invoice_data(text).fields
+            for field, expected_value in expected.items():
+                total += 1
+                matches += getattr(actual, field) == expected_value
+
+        self.assertEqual((matches, total), (16, 16))
+
     def test_extracts_explicit_invoice_fields_and_line_items(self) -> None:
         text = """Vendor: Northwind Office Supply
 Invoice Number: INV-2026-041

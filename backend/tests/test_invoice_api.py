@@ -461,6 +461,58 @@ class InvoiceAPITests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 404)
 
+    def test_file_preview_streams_stored_file(self) -> None:
+        upload = self.upload_pdf()
+        invoice_id = upload.json()["invoice_id"]
+
+        response = self.client.get(f"/invoices/{invoice_id}/file")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["content-type"], "application/pdf")
+        self.assertEqual(response.content, b"%PDF-1.7\nplaceholder document")
+
+    def test_file_preview_missing_invoice_returns_not_found(self) -> None:
+        response = self.client.get("/invoices/99999/file")
+        self.assertEqual(response.status_code, 404)
+
+    def test_review_missing_invoice_returns_not_found(self) -> None:
+        response = self.client.post(
+            "/invoices/99999/review",
+            json={"status": "reviewed"},
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_review_invalid_status_returns_bad_request(self) -> None:
+        upload = self.upload_pdf()
+        invoice_id = upload.json()["invoice_id"]
+
+        response = self.client.post(
+            f"/invoices/{invoice_id}/review",
+            json={"status": "invalid_status"},
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_patch_supports_nested_frontend_payload(self) -> None:
+        upload = self.upload_pdf()
+        invoice_id = upload.json()["invoice_id"]
+
+        response = self.client.patch(
+            f"/invoices/{invoice_id}",
+            json={
+                "vendor": {
+                    "name": "Nested Vendor Ltd",
+                    "address": "456 Market St",
+                    "taxId": "GSTIN987",
+                },
+                "discount": 15.50,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["vendor_name"], "Nested Vendor Ltd")
+        self.assertEqual(response.json()["vendor_address"], "456 Market St")
+        self.assertEqual(response.json()["vendor_tax_id"], "GSTIN987")
+        self.assertEqual(response.json()["discount_amount"], "15.50")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { UploadCloud, X, LoaderCircle, FileText, ShieldCheck, ScanText, CheckCircle2, Info, FileImage, ArrowRight } from 'lucide-react'
 import { PageHeader } from '../components/common'
+import { config } from '../config'
 import { validateFile, sizeStr } from '../utils'
 import { invoiceApi, errMsg } from '../services/invoiceApi'
 
@@ -14,7 +15,7 @@ export default function UploadPage() {
     if (!file || busy) return
     setBusy(true); setProg(0)
     try { const record = await invoiceApi.upload(file, setProg); toast.success('Invoice added to your workspace.'); nav(`/invoices/${record.id}/review`) }
-    catch (e) { setErr(errMsg(e)); toast.error('Upload failed. Check the connection and try again.') }
+    catch (e) { const message = errMsg(e); setErr(message); toast.error(message) }
     finally { setBusy(false) }
   }
   return <>
@@ -27,8 +28,8 @@ export default function UploadPage() {
           <div className="tiny-label mt-4">Supported formats: PDF, PNG, JPG, JPEG · Maximum file size: {config.maxMB} MB</div>
         </div>
         {err && <div className="notice error mt-3" role="alert"><Info size={16}/><span>{err}</span></div>}
-        {file && <div className="file-chip"><span className="file-icon">{file.type === 'application/pdf' ? <FileText size={20}/> : <FileImage size={20}/>}</span><div className="file-info"><b>{file.name}</b><small>{sizeStr(file.size)} · {file.type || 'Unknown file type'}{busy && prog != null ? ` · Uploading ${prog}%` : ' · Ready to upload'}</small>{busy && <div className="h-1.5 rounded-full bg-slate-100 mt-2 overflow-hidden"><div className="h-full bg-violet-500 transition-all" style={{ width: `${prog || 0}%` }}/></div>}</div><button className="icon-button" disabled={busy} aria-label="Remove selected file" onClick={() => { setFile(null); setErr(null) }}><X size={16}/></button></div>}
-        <div className="flex flex-wrap items-center justify-between gap-3 mt-4"><span className="tiny-label">Only upload documents you’re authorized to process.</span><button className="btn btn-p" disabled={!file || busy} onClick={submit}>{busy ? <LoaderCircle size={15} className="animate-spin"/> : <ArrowRight size={15}/>}{busy ? 'Uploading document…' : 'Continue to review'}</button></div>
+        {file && <div className="file-chip"><span className="file-icon">{file.type === 'application/pdf' ? <FileText size={20}/> : <FileImage size={20}/>}</span><div className="file-info"><b>{file.name}</b><small>{sizeStr(file.size)} · {file.type || 'Unknown file type'}{busy && prog != null ? prog >= 100 ? ' · Processing invoice…' : ` · Uploading ${prog}%` : ' · Ready to upload'}</small>{busy && <div className="h-1.5 rounded-full bg-slate-100 mt-2 overflow-hidden"><div className="h-full bg-violet-500 transition-all" style={{ width: `${prog || 0}%` }}/></div>}</div><button className="icon-button" disabled={busy} aria-label="Remove selected file" onClick={() => { setFile(null); setErr(null) }}><X size={16}/></button></div>}
+        <div className="flex flex-wrap items-center justify-between gap-3 mt-4"><span className="tiny-label">Only upload documents you’re authorized to process.</span><button className="btn btn-p" disabled={!file || busy} onClick={submit}>{busy ? <LoaderCircle size={15} className="animate-spin"/> : <ArrowRight size={15}/ >}{busy ? prog >= 100 ? 'Processing invoice…' : 'Uploading document…' : 'Continue to review'}</button></div>
       </section>
       <aside className="panel"><div className="panel-title-row"><div><h2 className="panel-title">What happens next?</h2><p className="panel-subtitle">A transparent, human-in-the-loop workflow.</p></div></div><div className="upload-tips">
         <div className="tip-row"><span className="tip-icon"><UploadCloud size={16}/></span><div><b>1. Securely add a document</b><p>Choose an invoice file in one of the supported formats. The backend should validate it again in live mode.</p></div></div>

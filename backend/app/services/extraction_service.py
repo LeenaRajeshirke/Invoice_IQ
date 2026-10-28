@@ -4,7 +4,7 @@ from decimal import Decimal, InvalidOperation
 
 from pydantic import BaseModel
 
-from app.schemas.invoice import InvoiceFields, InvoiceLineItem
+from app.schemas.invoice import CURRENCY_CODES, InvoiceFields, InvoiceLineItem
 
 
 class ExtractionResult(BaseModel):
@@ -12,17 +12,20 @@ class ExtractionResult(BaseModel):
     validation_warnings: list[str]
 
 
-CURRENCY_CODES = {
-    "AUD", "CAD", "CHF", "CNY", "EUR", "GBP", "INR", "JPY", "NZD", "USD",
-}
 MONEY_TOKEN = r"(?:[$\u20ac\u00a3]\s*)?[-+]?\d[\d,]*(?:\.\d{1,3})?(?:\s*[A-Z]{3})?"
 LINE_ITEM_PATTERN = re.compile(
     rf"^(?P<description>.+?)\s+(?P<quantity>\d+(?:\.\d+)?)\s+"
     rf"(?P<unit_price>{MONEY_TOKEN})\s+(?P<total_amount>{MONEY_TOKEN})$",
     re.IGNORECASE,
 )
+LINE_ITEM_TAX_PATTERN = re.compile(
+    rf"^(?P<description>.+?)\s+(?P<quantity>\d+(?:\.\d+)?)\s+"
+    rf"(?P<unit_price>{MONEY_TOKEN})\s+(?P<tax_rate>\d+(?:\.\d+)?)%\s+"
+    rf"(?P<total_amount>{MONEY_TOKEN})$",
+    re.IGNORECASE,
+)
 LABEL_BOUNDARY_PATTERN = re.compile(
-    r"^\s*(?:vendor(?:\s+name)?|supplier(?:\s+name)?|from|to|"
+    r"^\s*(?:vendor(?:\s+name)?|supplier(?:\s+name)?|from|to|bill\s+to|ship\s+to|"
     r"invoice\s*(?:number|no\.?|#|id)|invoice\s+date|date\s+of\s+invoice|"
     r"date\s+issued|due\s+date|payment\s+due|currency|sub[\s-]*total|"
     r"net\s+subtotal|sales\s+tax|tax(?:\s+amount)?|vat|gst|discount(?:\s+amount)?|"
@@ -33,6 +36,18 @@ LABEL_BOUNDARY_PATTERN = re.compile(
     re.IGNORECASE,
 )
 SUBTOTAL_TABLE_HEADER_PATTERN = re.compile(r"^\s*(?:sub[\s-]*total|net\s+subtotal)\s*$", re.IGNORECASE)
+PARTY_SECTION_PATTERN = re.compile(
+    r"^\s*(?P<label>from|vendor(?:\s+name)?|supplier(?:\s+name)?|to|bill\s+to|"
+    r"ship\s+to|customer(?:\s+name)?)\b\s*[:#-]?\s*(?P<value>.*?)\s*$",
+    re.IGNORECASE,
+)
+ADDRESS_STOP_PATTERN = re.compile(
+    r"^\s*(?:invoice|date\s+of\s+invoice|date\s+issued|due\s+date|payment\s+due|"
+    r"currency|sub[\s-]*total|net\s+subtotal|sales\s+tax|tax|vat|gst|discount|"
+    r"grand\s+total|invoice\s+total|total|amount\s+due|balance\s+due|"
+    r"hrs?\s*/\s*qty|quantity|qty|description|service)\b",
+    re.IGNORECASE,
+)
 
 
 def _next_labeled_value(lines: list[str], label_index: int) -> str | None:
@@ -202,6 +217,45 @@ def _extract_amount(
     return amounts[0]
 
 
+def _extract_party_details(
+    text: str, labels: set[str]
+) -> tuple[str | None, str | None]:
+    lines = text.splitlines()
+    for index, line in enumerate(lines):
+        match = PARTY_SECTION_PATTERN.fullmatch(line)
+        if not match:
+            continue
+        label = re.sub(r"\s+", " ", match.group("label").strip().lower())
+        if label not in labels:
+            continue
+        inline_name = match.group("value").strip()
+        section_lines = [
+            candidate.strip()
+            for candidate in lines[index + 1 : index + 8]
+            if candidate.strip()
+        ]
+        name = inline_name or (section_lines.pop(0) if section_lines else None)
+        if not name:
+            return None, None
+        address_lines: list[str] = []
+        for candidate in section_lines:
+            if ADDRESS_STOP_PATTERN.match(candidate) or PARTY_SECTION_PATTERN.fullmatch(candidate):
+                break
+            address_lines.append(candidate)
+        address = "\n".join(address_lines) or None
+        return name, address
+    return None, None
+
+
+def _parse_tax_rate(value: str) -> Decimal | None:
+    normalized = value.strip().removesuffix("%").strip()
+    try:
+        rate = Decimal(normalized)
+    except InvalidOperation:
+        return None
+    return rate if rate >= 0 else None
+
+
 def _validate_amount_arithmetic(fields: InvoiceFields, warnings: list[str]) -> None:
     if fields.subtotal is None or fields.tax_amount is None or fields.total_amount is None:
         return
@@ -215,20 +269,34 @@ def _validate_amount_arithmetic(fields: InvoiceFields, warnings: list[str]) -> N
 
 
 def _parse_line_item(line: str, currency: str | None) -> InvoiceLineItem | None:
+    tax_rate: Decimal | None = None
     if "|" in line:
         parts = [part.strip() for part in line.split("|")]
-        if len(parts) == 4:
+        if len(parts) == 5:
+            description, quantity_text, unit_price_text, tax_rate_text, total_text = parts
+            tax_rate = _parse_tax_rate(tax_rate_text)
+            if tax_rate is None:
+                return None
+        elif len(parts) == 4:
             description, quantity_text, unit_price_text, total_text = parts
         else:
             return None
     else:
-        match = LINE_ITEM_PATTERN.fullmatch(line.strip())
-        if not match:
-            return None
-        description = match.group("description").strip()
-        quantity_text = match.group("quantity")
-        unit_price_text = match.group("unit_price")
-        total_text = match.group("total_amount")
+        match = LINE_ITEM_TAX_PATTERN.fullmatch(line.strip())
+        if match:
+            description = match.group("description").strip()
+            quantity_text = match.group("quantity")
+            unit_price_text = match.group("unit_price")
+            total_text = match.group("total_amount")
+            tax_rate = _parse_tax_rate(match.group("tax_rate"))
+        else:
+            match = LINE_ITEM_PATTERN.fullmatch(line.strip())
+            if not match:
+                return None
+            description = match.group("description").strip()
+            quantity_text = match.group("quantity")
+            unit_price_text = match.group("unit_price")
+            total_text = match.group("total_amount")
 
     unit_price = _parse_amount(unit_price_text, currency)
     total_amount = _parse_amount(total_text, currency)
@@ -236,12 +304,20 @@ def _parse_line_item(line: str, currency: str | None) -> InvoiceLineItem | None:
         quantity = Decimal(quantity_text)
     except InvalidOperation:
         return None
-    if not description or unit_price is None or total_amount is None:
+    if (
+        not description
+        or quantity <= 0
+        or unit_price is None
+        or unit_price < 0
+        or total_amount is None
+        or total_amount < 0
+    ):
         return None
     return InvoiceLineItem(
         description=description,
         quantity=quantity,
         unit_price=unit_price,
+        tax_rate=tax_rate,
         total_amount=total_amount,
     )
 
@@ -249,10 +325,42 @@ def _parse_line_item(line: str, currency: str | None) -> InvoiceLineItem | None:
 def extract_invoice_data(ocr_text: str) -> ExtractionResult:
     """Extract only explicit, supported invoice patterns; this is not an ML model."""
     warnings: list[str] = []
-    vendor_values = _labeled_values(ocr_text, r"vendor(?:\s+name)?|supplier(?:\s+name)?|from")
-    vendor_name = _unique_value(vendor_values, "vendor name", warnings)
+    vendor_name, vendor_address = _extract_party_details(
+        ocr_text, {"from", "vendor", "vendor name", "supplier", "supplier name"}
+    )
+    if vendor_name is None:
+        vendor_values = _labeled_values(ocr_text, r"vendor(?:\s+name)?|supplier(?:\s+name)?|from")
+        vendor_name = _unique_value(vendor_values, "vendor name", warnings)
+    else:
+        vendor_values = [vendor_name]
     if vendor_name is None and not vendor_values:
         warnings.append("Vendor name was not found under a supported label; review is required.")
+
+    customer_name, customer_address = _extract_party_details(
+        ocr_text, {"to", "bill to", "ship to", "customer", "customer name"}
+    )
+    customer_name = customer_name or _unique_value(
+        _labeled_values(
+            ocr_text,
+            r"(?:customer(?:\s+name)?|bill\s+to|ship\s+to|to)\b",
+        ),
+        "customer name",
+        warnings,
+    )
+    vendor_tax_ids = _labeled_values(
+        ocr_text, r"(?:vendor\s+)?(?:tax\s*(?:id|number)|vat\s*(?:id|number)|gstin|tin)"
+    )
+    customer_tax_ids = _labeled_values(
+        ocr_text,
+        r"customer\s+(?:tax\s*(?:id|number)|vat\s*(?:id|number)|gstin|tin)",
+    )
+    vendor_tax_id = _unique_value(vendor_tax_ids, "vendor tax ID", warnings)
+    customer_tax_id = _unique_value(customer_tax_ids, "customer tax ID", warnings)
+    payment_terms = _unique_value(
+        _labeled_values(ocr_text, r"payment\s+terms|terms\s+of\s+payment"),
+        "payment terms",
+        warnings,
+    )
 
     invoice_numbers = _labeled_values(ocr_text, r"invoice\s*(?:number|no\.?|#)")
     invoice_number = _unique_value(invoice_numbers, "invoice number", warnings)
@@ -294,10 +402,16 @@ def extract_invoice_data(ocr_text: str) -> ExtractionResult:
 
     fields = InvoiceFields(
         vendor_name=vendor_name,
+        vendor_address=vendor_address,
+        vendor_tax_id=vendor_tax_id,
+        customer_name=customer_name,
+        customer_address=customer_address,
+        customer_tax_id=customer_tax_id,
         invoice_number=invoice_number,
         invoice_date=invoice_date,
         due_date=due_date,
         currency=currency,
+        payment_terms=payment_terms,
         subtotal=subtotal,
         tax_amount=tax_amount,
         discount_amount=discount_amount,

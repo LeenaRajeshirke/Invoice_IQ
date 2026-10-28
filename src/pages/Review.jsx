@@ -16,13 +16,28 @@ function ReviewField({ form, edit, label, path, type = 'text', conf, placeholder
 function ReviewSection({ title, children }) { return <fieldset className="panel review-section"><legend>{title}</legend><div className="section-grid">{children}</div></fieldset> }
 
 function Preview({ id, url }) {
-  const [zoom, setZoom] = useState(1), [failed, setFailed] = useState(false)
-  const file = useMemo(() => invoiceApi.getFile?.(id), [id])
+  const [zoom, setZoom] = useState(1), [failed, setFailed] = useState(false), [loading, setLoading] = useState(Boolean(url))
   const [obj, setObj] = useState(null)
-  useEffect(() => { setFailed(false); if (!file) { setObj(null); return } const u = URL.createObjectURL(file); setObj({ u, type: file.type }); return () => URL.revokeObjectURL(u) }, [file])
-  const src = obj?.u || url, isPdf = obj ? obj.type === 'application/pdf' : /\.pdf(\?|$)/i.test(url || '')
+  useEffect(() => {
+    let active = true
+    let objectUrl
+    setFailed(false)
+    setObj(null)
+    setLoading(Boolean(url))
+    Promise.resolve(invoiceApi.getFile?.(id, url)).then(file => {
+      if (!active) return
+      if (!file) { setLoading(false); return }
+      objectUrl = URL.createObjectURL(file)
+      setObj({ u: objectUrl, type: file.type })
+      setLoading(false)
+    }).catch(() => {
+      if (active) { setFailed(true); setLoading(false) }
+    })
+    return () => { active = false; if (objectUrl) URL.revokeObjectURL(objectUrl) }
+  }, [id, url])
+  const src = obj?.u, isPdf = obj?.type === 'application/pdf'
   return <section className="panel"><div className="panel-title-row"><div><h2 className="panel-title">Original document</h2><p className="panel-subtitle">Compare the source with the extracted values.</p></div><div className="flex gap-1"><button className="icon-button" aria-label="Zoom out" title="Zoom out" disabled={zoom <= .5 || isPdf} onClick={() => setZoom(z => z - .25)}><ZoomOut size={15}/></button><button className="icon-button" aria-label="Zoom in" title="Zoom in" disabled={zoom >= 3 || isPdf} onClick={() => setZoom(z => z + .25)}><ZoomIn size={15}/></button>{src && <a className="icon-button" href={src} target="_blank" rel="noreferrer" aria-label="Open original document" title="Open original document"><ExternalLink size={15}/></a>}</div></div>
-    <div className="preview-frame">{!src || failed ? <div className="empty-state self-center"><FileText size={32} className="mx-auto"/><h3>{failed ? 'Preview unavailable' : 'No original file attached'}</h3><p>{failed ? 'This file could not be rendered in the browser.' : 'A source preview will appear here when the original document is available.'}</p></div> : isPdf ? <iframe title="Invoice PDF preview" src={src} className="w-full h-full border-0" onError={() => setFailed(true)}/> : <img alt="Uploaded invoice" src={src} style={{ width: `${zoom * 100}%`, maxWidth: 'none', height: 'auto' }} onError={() => setFailed(true)}/>}</div>
+    <div className="preview-frame">{loading ? <div className="empty-state self-center"><FileText size={32} className="mx-auto"/><h3>Loading original document</h3></div> : !src || failed ? <div className="empty-state self-center"><FileText size={32} className="mx-auto"/><h3>{failed ? 'Preview unavailable' : 'No original file attached'}</h3><p>{failed ? 'This file could not be loaded from the backend.' : 'A source preview will appear here when the original document is available.'}</p></div> : isPdf ? <iframe title="Invoice PDF preview" src={src} className="w-full h-full border-0" onError={() => setFailed(true)}/> : <img alt="Uploaded invoice" src={src} style={{ width: `${zoom * 100}%`, maxWidth: 'none', height: 'auto' }} onError={() => setFailed(true)}/>}</div>
     <div className="flex items-center gap-2 mt-3 tiny-label"><Info size={13}/>{isPdf ? 'PDF preview uses the browser viewer.' : `Image zoom · ${Math.round(zoom * 100)}%`}</div>
   </section>
 }
@@ -52,7 +67,7 @@ export default function Review() {
     <div className="flex items-center gap-2 flex-wrap mb-4"><StatusBadge value={form.processingStatus}/><StatusBadge kind="review" value={saved.reviewStatus}/>{dirty && <span className="status-badge badge-amber"><Clock3 size={11}/>Unsaved changes</span>}</div>
     <div className="review-layout"><div className="review-sticky"><Preview id={id} url={form.originalFileUrl}/></div><div>
       {warningCount > 0 && <section className="panel mb-3"><div className="panel-title-row"><div><h2 className="panel-title">Validation findings</h2><p className="panel-subtitle">{warningCount} item{warningCount === 1 ? '' : 's'} reported by the data service.</p></div><span className="status-badge badge-amber">Needs attention</span></div><ul className="warning-list">{form.validationWarnings.map((w, i) => <Warning key={`${w.field || 'warning'}-${i}`} w={w}/>)}</ul></section>}
-      <ReviewSection title="Invoice details"><ReviewField form={form} edit={edit} label="Invoice number" path="invoiceNumber" conf="invoiceNumber" placeholder="e.g. INV-1001"/><ReviewField form={form} edit={edit} label="Currency" path="currency" conf="currency" placeholder="INR"/><ReviewField form={form} edit={edit} label="Invoice date" path="invoiceDate" type="date" conf="invoiceDate"/><ReviewField form={form} edit={edit} label="Due date" path="dueDate" type="date" conf="dueDate"/><ReviewField form={form} edit={edit} label="Payment terms" path="paymentTerms" placeholder="e.g. Net 30"/><ReviewField form={form} edit={edit} label="Processing status" path="processingStatus"/></ReviewSection>
+      <ReviewSection title="Invoice details"><ReviewField form={form} edit={edit} label="Invoice number" path="invoiceNumber" conf="invoiceNumber" placeholder="e.g. INV-1001"/><ReviewField form={form} edit={edit} label="Currency" path="currency" conf="currency" placeholder="INR"/><ReviewField form={form} edit={edit} label="Invoice date" path="invoiceDate" type="date" conf="invoiceDate"/><ReviewField form={form} edit={edit} label="Due date" path="dueDate" type="date" conf="dueDate"/><ReviewField form={form} edit={edit} label="Payment terms" path="paymentTerms" placeholder="e.g. Net 30"/></ReviewSection>
       <ReviewSection title="Vendor information"><ReviewField form={form} edit={edit} label="Vendor name" path="vendor.name" conf="vendor"/><ReviewField form={form} edit={edit} label="Vendor tax ID" path="vendor.taxId" placeholder="GSTIN / tax identifier"/><div className="span-two"><ReviewField form={form} edit={edit} label="Vendor address" path="vendor.address"/></div></ReviewSection>
       <ReviewSection title="Customer information"><ReviewField form={form} edit={edit} label="Customer name" path="customer.name"/><ReviewField form={form} edit={edit} label="Customer tax ID" path="customer.taxId"/><div className="span-two"><ReviewField form={form} edit={edit} label="Customer address" path="customer.address"/></div></ReviewSection>
       <ReviewSection title="Financial summary"><ReviewField form={form} edit={edit} label="Subtotal" path="subtotal" type="number" conf="subtotal"/><ReviewField form={form} edit={edit} label="Tax amount" path="taxAmount" type="number" conf="taxAmount"/><ReviewField form={form} edit={edit} label="Discount" path="discount" type="number"/><ReviewField form={form} edit={edit} label="Total amount" path="totalAmount" type="number" conf="totalAmount"/><ReviewField form={form} edit={edit} label="Amount paid" path="amountPaid" type="number"/><ReviewField form={form} edit={edit} label="Balance due" path="balanceDue" type="number"/></ReviewSection>

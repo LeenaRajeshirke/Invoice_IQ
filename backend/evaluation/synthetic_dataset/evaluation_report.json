@@ -1,0 +1,1429 @@
+{
+  "sample_size": 23,
+  "categories": {
+    "digital_pdf_count": 20,
+    "ocr_scanned_and_image_count": 3
+  },
+  "per_field_accuracy_pct": {
+    "vendor_name": 87.0,
+    "invoice_number": 87.0,
+    "invoice_date": 87.0,
+    "due_date": 87.0,
+    "currency": 87.0,
+    "subtotal": 87.0,
+    "tax_amount": 87.0,
+    "discount_amount": 95.7,
+    "total_amount": 87.0
+  },
+  "line_item_accuracy_pct": 86.7,
+  "full_invoice_exact_match_pct": 87.0,
+  "arithmetic_consistency_detection_pct": 100.0,
+  "latency_ms": {
+    "digital_pdf_mean": 5.0,
+    "ocr_scanned_mean": 1748.1
+  },
+  "detailed_results": [
+    {
+      "filename": "synthetic_001.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 50.56,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Aster Office Goods",
+          "actual": "Aster Office Goods",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0001",
+          "actual": "IQ-SYN-0001",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-01-05",
+          "actual": "2026-01-05",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-01-19",
+          "actual": "2026-01-19",
+          "matched": true
+        },
+        "currency": {
+          "expected": "USD",
+          "actual": "USD",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "12.50",
+          "actual": "12.50",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "0.00",
+          "actual": "0.00",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": null,
+          "actual": null,
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "12.50",
+          "actual": "12.50",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [
+        "Discount amount was not found in a supported format; review is required."
+      ],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_002.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.89,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Blue Finch Software",
+          "actual": "Blue Finch Software",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0002",
+          "actual": "IQ-SYN-0002",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-01-12",
+          "actual": "2026-01-12",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-02-02",
+          "actual": "2026-02-02",
+          "matched": true
+        },
+        "currency": {
+          "expected": "EUR",
+          "actual": "EUR",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "98.50",
+          "actual": "98.50",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "4.92",
+          "actual": "4.92",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": "4.92",
+          "actual": "4.92",
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "98.50",
+          "actual": "98.50",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_003.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.8,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Cedar Ridge Freight",
+          "actual": "Cedar Ridge Freight",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0003",
+          "actual": "IQ-SYN-0003",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-01-19",
+          "actual": "2026-01-19",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-02-16",
+          "actual": "2026-02-16",
+          "matched": true
+        },
+        "currency": {
+          "expected": "GBP",
+          "actual": "GBP",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "320.00",
+          "actual": "320.00",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "25.60",
+          "actual": "25.60",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": null,
+          "actual": null,
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "345.60",
+          "actual": "345.60",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [
+        "Discount amount was not found in a supported format; review is required."
+      ],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_004.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.89,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Delta Workshop Supply",
+          "actual": "Delta Workshop Supply",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0004",
+          "actual": "IQ-SYN-0004",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-01-26",
+          "actual": "2026-01-26",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-02-09",
+          "actual": "2026-02-09",
+          "matched": true
+        },
+        "currency": {
+          "expected": "CAD",
+          "actual": "CAD",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "86.00",
+          "actual": "86.00",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "8.60",
+          "actual": "8.60",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": null,
+          "actual": null,
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "94.60",
+          "actual": "94.60",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [
+        "Discount amount was not found in a supported format; review is required."
+      ],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_005.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.9,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Evergreen Design House",
+          "actual": "Evergreen Design House",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0005",
+          "actual": "IQ-SYN-0005",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-02-02",
+          "actual": "2026-02-02",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-02-23",
+          "actual": "2026-02-23",
+          "matched": true
+        },
+        "currency": {
+          "expected": "AUD",
+          "actual": "AUD",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "154.00",
+          "actual": "154.00",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "30.80",
+          "actual": "30.80",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": null,
+          "actual": null,
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "184.80",
+          "actual": "184.80",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [
+        "Discount amount was not found in a supported format; review is required."
+      ],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_006.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.56,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Foxglove Catering",
+          "actual": "Foxglove Catering",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0006",
+          "actual": "IQ-SYN-0006",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-02-09",
+          "actual": "2026-02-09",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-03-09",
+          "actual": "2026-03-09",
+          "matched": true
+        },
+        "currency": {
+          "expected": "EUR",
+          "actual": "EUR",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "221.00",
+          "actual": "221.00",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "0.00",
+          "actual": "0.00",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": "11.05",
+          "actual": "11.05",
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "209.95",
+          "actual": "209.95",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_007.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.3,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Granite Peak Services",
+          "actual": "Granite Peak Services",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0007",
+          "actual": "IQ-SYN-0007",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-02-16",
+          "actual": "2026-02-16",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-03-02",
+          "actual": "2026-03-02",
+          "matched": true
+        },
+        "currency": {
+          "expected": "USD",
+          "actual": "USD",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "61.00",
+          "actual": "61.00",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "3.05",
+          "actual": "3.05",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": null,
+          "actual": null,
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "64.05",
+          "actual": "64.05",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [
+        "Discount amount was not found in a supported format; review is required."
+      ],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_008.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.66,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Harborlight Components",
+          "actual": "Harborlight Components",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0008",
+          "actual": "IQ-SYN-0008",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-02-23",
+          "actual": "2026-02-23",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-03-16",
+          "actual": "2026-03-16",
+          "matched": true
+        },
+        "currency": {
+          "expected": "INR",
+          "actual": "INR",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "262.50",
+          "actual": "262.50",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "21.00",
+          "actual": "21.00",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": null,
+          "actual": null,
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "283.50",
+          "actual": "283.50",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [
+        "Discount amount was not found in a supported format; review is required."
+      ],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_009.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.71,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Aster Office Goods",
+          "actual": "Aster Office Goods",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0009",
+          "actual": "IQ-SYN-0009",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-03-02",
+          "actual": "2026-03-02",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-03-30",
+          "actual": "2026-03-30",
+          "matched": true
+        },
+        "currency": {
+          "expected": "USD",
+          "actual": "USD",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "414.00",
+          "actual": "414.00",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "41.40",
+          "actual": "41.40",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": null,
+          "actual": null,
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "465.40",
+          "actual": "465.40",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [
+        "Discount amount was not found in a supported format; review is required.",
+        "Identified invoice amounts do not reconcile; review is required."
+      ],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_010.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.91,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Blue Finch Software",
+          "actual": "Blue Finch Software",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0010",
+          "actual": "IQ-SYN-0010",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-03-09",
+          "actual": "2026-03-09",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-03-23",
+          "actual": "2026-03-23",
+          "matched": true
+        },
+        "currency": {
+          "expected": "EUR",
+          "actual": "EUR",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "197.50",
+          "actual": "197.50",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "39.50",
+          "actual": "39.50",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": "9.88",
+          "actual": "9.88",
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "227.12",
+          "actual": "227.12",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_011.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.49,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Cedar Ridge Freight",
+          "actual": "Cedar Ridge Freight",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0011",
+          "actual": "IQ-SYN-0011",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-03-16",
+          "actual": "2026-03-16",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-04-06",
+          "actual": "2026-04-06",
+          "matched": true
+        },
+        "currency": {
+          "expected": "GBP",
+          "actual": "GBP",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "141.50",
+          "actual": "141.50",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "0.00",
+          "actual": "0.00",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": null,
+          "actual": null,
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "141.50",
+          "actual": "141.50",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [
+        "Discount amount was not found in a supported format; review is required."
+      ],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_012.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.65,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Delta Workshop Supply",
+          "actual": "Delta Workshop Supply",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0012",
+          "actual": "IQ-SYN-0012",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-03-23",
+          "actual": "2026-03-23",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-04-20",
+          "actual": "2026-04-20",
+          "matched": true
+        },
+        "currency": {
+          "expected": "CAD",
+          "actual": "CAD",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "486.50",
+          "actual": "486.50",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "24.32",
+          "actual": "24.32",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": null,
+          "actual": null,
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "510.82",
+          "actual": "510.82",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [
+        "Discount amount was not found in a supported format; review is required."
+      ],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_013.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.45,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Evergreen Design House",
+          "actual": "Evergreen Design House",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0013",
+          "actual": "IQ-SYN-0013",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-03-30",
+          "actual": "2026-03-30",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-04-13",
+          "actual": "2026-04-13",
+          "matched": true
+        },
+        "currency": {
+          "expected": "AUD",
+          "actual": "AUD",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "145.50",
+          "actual": "145.50",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "11.64",
+          "actual": "11.64",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": null,
+          "actual": null,
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "157.14",
+          "actual": "157.14",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [
+        "Discount amount was not found in a supported format; review is required."
+      ],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_014.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.25,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Foxglove Catering",
+          "actual": "Foxglove Catering",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0014",
+          "actual": "IQ-SYN-0014",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-04-06",
+          "actual": "2026-04-06",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-04-27",
+          "actual": "2026-04-27",
+          "matched": true
+        },
+        "currency": {
+          "expected": "EUR",
+          "actual": "EUR",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "498.50",
+          "actual": "498.50",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "49.85",
+          "actual": "49.85",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": "24.92",
+          "actual": "24.92",
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "523.43",
+          "actual": "523.43",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_015.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.93,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Granite Peak Services",
+          "actual": "Granite Peak Services",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0015",
+          "actual": "IQ-SYN-0015",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-04-13",
+          "actual": "2026-04-13",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-05-11",
+          "actual": "2026-05-11",
+          "matched": true
+        },
+        "currency": {
+          "expected": "USD",
+          "actual": "USD",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "471.00",
+          "actual": "471.00",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "94.20",
+          "actual": "94.20",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": null,
+          "actual": null,
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "565.20",
+          "actual": "565.20",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [
+        "Discount amount was not found in a supported format; review is required."
+      ],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_016.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.26,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Harborlight Components",
+          "actual": "Harborlight Components",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0016",
+          "actual": "IQ-SYN-0016",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-04-20",
+          "actual": "2026-04-20",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-05-04",
+          "actual": "2026-05-04",
+          "matched": true
+        },
+        "currency": {
+          "expected": "INR",
+          "actual": "INR",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "57.50",
+          "actual": "57.50",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "0.00",
+          "actual": "0.00",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": null,
+          "actual": null,
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "57.50",
+          "actual": "57.50",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [
+        "Discount amount was not found in a supported format; review is required."
+      ],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_017.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.76,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Aster Office Goods",
+          "actual": "Aster Office Goods",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0017",
+          "actual": "IQ-SYN-0017",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-04-27",
+          "actual": "2026-04-27",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-05-18",
+          "actual": "2026-05-18",
+          "matched": true
+        },
+        "currency": {
+          "expected": "USD",
+          "actual": "USD",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "323.50",
+          "actual": "323.50",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "16.18",
+          "actual": "16.18",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": null,
+          "actual": null,
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "339.68",
+          "actual": "339.68",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [
+        "Discount amount was not found in a supported format; review is required."
+      ],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_018.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.42,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Blue Finch Software",
+          "actual": "Blue Finch Software",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0018",
+          "actual": "IQ-SYN-0018",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-05-04",
+          "actual": "2026-05-04",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-06-01",
+          "actual": "2026-06-01",
+          "matched": true
+        },
+        "currency": {
+          "expected": "EUR",
+          "actual": "EUR",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "860.00",
+          "actual": "860.00",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "68.80",
+          "actual": "68.80",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": "43.00",
+          "actual": "43.00",
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "885.80",
+          "actual": "885.80",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_019.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.87,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Cedar Ridge Freight",
+          "actual": "Cedar Ridge Freight",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0019",
+          "actual": "IQ-SYN-0019",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-05-11",
+          "actual": "2026-05-11",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-05-25",
+          "actual": "2026-05-25",
+          "matched": true
+        },
+        "currency": {
+          "expected": "GBP",
+          "actual": "GBP",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "266.00",
+          "actual": "266.00",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "26.60",
+          "actual": "26.60",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": null,
+          "actual": null,
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "302.60",
+          "actual": "302.60",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [
+        "Discount amount was not found in a supported format; review is required.",
+        "Identified invoice amounts do not reconcile; review is required."
+      ],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_020.pdf",
+      "file_type": "digital_pdf",
+      "ocr_source": "embedded_text",
+      "latency_ms": 2.55,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Delta Workshop Supply",
+          "actual": "Delta Workshop Supply",
+          "matched": true
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0020",
+          "actual": "IQ-SYN-0020",
+          "matched": true
+        },
+        "invoice_date": {
+          "expected": "2026-05-18",
+          "actual": "2026-05-18",
+          "matched": true
+        },
+        "due_date": {
+          "expected": "2026-06-08",
+          "actual": "2026-06-08",
+          "matched": true
+        },
+        "currency": {
+          "expected": "CAD",
+          "actual": "CAD",
+          "matched": true
+        },
+        "subtotal": {
+          "expected": "424.00",
+          "actual": "424.00",
+          "matched": true
+        },
+        "tax_amount": {
+          "expected": "84.80",
+          "actual": "84.80",
+          "matched": true
+        },
+        "discount_amount": {
+          "expected": null,
+          "actual": null,
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "508.80",
+          "actual": "508.80",
+          "matched": true
+        }
+      },
+      "all_fields_matched": true,
+      "warnings": [
+        "Discount amount was not found in a supported format; review is required."
+      ],
+      "line_items_accuracy": 1.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_021.png",
+      "file_type": "image_png",
+      "ocr_source": "empty",
+      "latency_ms": 5076.84,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Evergreen Design House",
+          "actual": null,
+          "matched": false
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0021",
+          "actual": null,
+          "matched": false
+        },
+        "invoice_date": {
+          "expected": "2026-05-25",
+          "actual": null,
+          "matched": false
+        },
+        "due_date": {
+          "expected": "2026-06-22",
+          "actual": null,
+          "matched": false
+        },
+        "currency": {
+          "expected": "AUD",
+          "actual": null,
+          "matched": false
+        },
+        "subtotal": {
+          "expected": "491.00",
+          "actual": null,
+          "matched": false
+        },
+        "tax_amount": {
+          "expected": "0.00",
+          "actual": null,
+          "matched": false
+        },
+        "discount_amount": {
+          "expected": null,
+          "actual": null,
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "491.00",
+          "actual": null,
+          "matched": false
+        }
+      },
+      "all_fields_matched": false,
+      "warnings": [
+        "Vendor name was not found under a supported label; review is required.",
+        "Invoice number was not found under a supported label; review is required.",
+        "Invoice date was not found in a supported format; review is required.",
+        "Due date was not found in a supported format; review is required.",
+        "Currency was not found; review is required.",
+        "Subtotal was not found in a supported format; review is required.",
+        "Tax amount was not found in a supported format; review is required.",
+        "Discount amount was not found in a supported format; review is required.",
+        "Total amount was not found in a supported format; review is required.",
+        "No line items matched a supported row format; review is required.",
+        "The image could not be read by OCR."
+      ],
+      "line_items_accuracy": 0.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_022.jpg",
+      "file_type": "image_jpeg",
+      "ocr_source": "empty",
+      "latency_ms": 25.56,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Foxglove Catering",
+          "actual": null,
+          "matched": false
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0022",
+          "actual": null,
+          "matched": false
+        },
+        "invoice_date": {
+          "expected": "2026-06-01",
+          "actual": null,
+          "matched": false
+        },
+        "due_date": {
+          "expected": "2026-06-15",
+          "actual": null,
+          "matched": false
+        },
+        "currency": {
+          "expected": "EUR",
+          "actual": null,
+          "matched": false
+        },
+        "subtotal": {
+          "expected": "151.00",
+          "actual": null,
+          "matched": false
+        },
+        "tax_amount": {
+          "expected": "7.55",
+          "actual": null,
+          "matched": false
+        },
+        "discount_amount": {
+          "expected": "7.55",
+          "actual": null,
+          "matched": false
+        },
+        "total_amount": {
+          "expected": "151.00",
+          "actual": null,
+          "matched": false
+        }
+      },
+      "all_fields_matched": false,
+      "warnings": [
+        "Vendor name was not found under a supported label; review is required.",
+        "Invoice number was not found under a supported label; review is required.",
+        "Invoice date was not found in a supported format; review is required.",
+        "Due date was not found in a supported format; review is required.",
+        "Currency was not found; review is required.",
+        "Subtotal was not found in a supported format; review is required.",
+        "Tax amount was not found in a supported format; review is required.",
+        "Discount amount was not found in a supported format; review is required.",
+        "Total amount was not found in a supported format; review is required.",
+        "No line items matched a supported row format; review is required.",
+        "The image could not be read by OCR."
+      ],
+      "line_items_accuracy": 0.0,
+      "arithmetic_consistent_detected": true
+    },
+    {
+      "filename": "synthetic_023_scanned.pdf",
+      "file_type": "scanned_pdf",
+      "ocr_source": "empty",
+      "latency_ms": 141.89,
+      "token_confidence": null,
+      "field_matches": {
+        "vendor_name": {
+          "expected": "Granite Peak Services",
+          "actual": null,
+          "matched": false
+        },
+        "invoice_number": {
+          "expected": "IQ-SYN-0023",
+          "actual": null,
+          "matched": false
+        },
+        "invoice_date": {
+          "expected": "2026-06-08",
+          "actual": null,
+          "matched": false
+        },
+        "due_date": {
+          "expected": "2026-06-29",
+          "actual": null,
+          "matched": false
+        },
+        "currency": {
+          "expected": "USD",
+          "actual": null,
+          "matched": false
+        },
+        "subtotal": {
+          "expected": "577.50",
+          "actual": null,
+          "matched": false
+        },
+        "tax_amount": {
+          "expected": "46.20",
+          "actual": null,
+          "matched": false
+        },
+        "discount_amount": {
+          "expected": null,
+          "actual": null,
+          "matched": true
+        },
+        "total_amount": {
+          "expected": "623.70",
+          "actual": null,
+          "matched": false
+        }
+      },
+      "all_fields_matched": false,
+      "warnings": [
+        "Vendor name was not found under a supported label; review is required.",
+        "Invoice number was not found under a supported label; review is required.",
+        "Invoice date was not found in a supported format; review is required.",
+        "Due date was not found in a supported format; review is required.",
+        "Currency was not found; review is required.",
+        "Subtotal was not found in a supported format; review is required.",
+        "Tax amount was not found in a supported format; review is required.",
+        "Discount amount was not found in a supported format; review is required.",
+        "Total amount was not found in a supported format; review is required.",
+        "No line items matched a supported row format; review is required.",
+        "Page 1 could not be read by OCR."
+      ],
+      "line_items_accuracy": 0.0,
+      "arithmetic_consistent_detected": true
+    }
+  ]
+}

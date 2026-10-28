@@ -1,0 +1,177 @@
+{
+  "inv_01_digital_standard.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Acme Industrial Supplies",
+    "invoice_number": "INV-2026-101",
+    "invoice_date": "2026-10-01",
+    "due_date": "2026-10-31",
+    "currency": "USD",
+    "subtotal": "100.00",
+    "tax_amount": "10.00",
+    "discount_amount": "0.00",
+    "total_amount": "110.00",
+    "line_items_count": 2,
+    "line_items": [
+      {
+        "description": "Steel Bolt Pack",
+        "quantity": "10",
+        "unit_price": "5.00",
+        "total_amount": "50.00"
+      },
+      {
+        "description": "Industrial Washer",
+        "quantity": "20",
+        "unit_price": "2.50",
+        "total_amount": "50.00"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "inv_02_digital_discount_eur.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Bavaria Tech GmbH",
+    "invoice_number": "INV-DE-882",
+    "invoice_date": "2026-09-15",
+    "due_date": "2026-10-15",
+    "currency": "EUR",
+    "subtotal": "500.00",
+    "tax_amount": "85.50",
+    "discount_amount": "50.00",
+    "total_amount": "535.50",
+    "line_items_count": 1,
+    "line_items": [
+      {
+        "description": "Server Maintenance",
+        "quantity": "1",
+        "unit_price": "500.00",
+        "total_amount": "500.00"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "inv_03_digital_minimal.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Cornerstone Advisory",
+    "invoice_number": "CA-4004",
+    "invoice_date": "2026-08-10",
+    "due_date": null,
+    "currency": "USD",
+    "subtotal": "750.00",
+    "tax_amount": "0.00",
+    "discount_amount": null,
+    "total_amount": "750.00",
+    "line_items_count": 0,
+    "line_items": [],
+    "arithmetic_consistent": true
+  },
+  "inv_04_digital_gbp.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Thames Creative Studio",
+    "invoice_number": "TCS-1102",
+    "invoice_date": "2026-07-04",
+    "due_date": "2026-07-18",
+    "currency": "GBP",
+    "subtotal": "800.00",
+    "tax_amount": "160.00",
+    "discount_amount": null,
+    "total_amount": "960.00",
+    "line_items_count": 1,
+    "line_items": [
+      {
+        "description": "UI Design Sprints",
+        "quantity": "2",
+        "unit_price": "400.00",
+        "total_amount": "800.00"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "inv_05_digital_inconsistent.pdf": {
+    "file_type": "digital_pdf",
+    "vendor_name": "Global Logistics Partners",
+    "invoice_number": "GLP-5520",
+    "invoice_date": "2026-10-05",
+    "due_date": "2026-10-25",
+    "currency": "USD",
+    "subtotal": "300.00",
+    "tax_amount": "25.00",
+    "discount_amount": null,
+    "total_amount": "450.00",
+    "line_items_count": 1,
+    "line_items": [
+      {
+        "description": "Freight Transport",
+        "quantity": "1",
+        "unit_price": "300.00",
+        "total_amount": "300.00"
+      }
+    ],
+    "arithmetic_consistent": false
+  },
+  "inv_06_scanned_pdf.pdf": {
+    "file_type": "scanned_pdf",
+    "vendor_name": "Pacific Hardware Store",
+    "invoice_number": "PH-771",
+    "invoice_date": "2026-09-01",
+    "due_date": "2026-09-30",
+    "currency": "USD",
+    "subtotal": "100.00",
+    "tax_amount": "8.00",
+    "discount_amount": null,
+    "total_amount": "108.00",
+    "line_items_count": 1,
+    "line_items": [
+      {
+        "description": "Copper Pipe",
+        "quantity": "4",
+        "unit_price": "25.00",
+        "total_amount": "100.00"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "inv_07_image_receipt.png": {
+    "file_type": "image_png",
+    "vendor_name": "Highland Office Supplies",
+    "invoice_number": "HOS-901",
+    "invoice_date": "2026-06-12",
+    "due_date": "2026-07-12",
+    "currency": "USD",
+    "subtotal": "90.00",
+    "tax_amount": "7.20",
+    "discount_amount": null,
+    "total_amount": "97.20",
+    "line_items_count": 1,
+    "line_items": [
+      {
+        "description": "Printer Toner Cartridge",
+        "quantity": "2",
+        "unit_price": "45.00",
+        "total_amount": "90.00"
+      }
+    ],
+    "arithmetic_consistent": true
+  },
+  "inv_08_image_receipt.jpg": {
+    "file_type": "image_jpeg",
+    "vendor_name": "Lyon Catering Services",
+    "invoice_number": "LCS-334",
+    "invoice_date": "2026-05-20",
+    "due_date": "2026-06-20",
+    "currency": "EUR",
+    "subtotal": "150.00",
+    "tax_amount": "15.00",
+    "discount_amount": null,
+    "total_amount": "165.00",
+    "line_items_count": 1,
+    "line_items": [
+      {
+        "description": "Event Breakfast Platters",
+        "quantity": "5",
+        "unit_price": "30.00",
+        "total_amount": "150.00"
+      }
+    ],
+    "arithmetic_consistent": true
+  }
+}
