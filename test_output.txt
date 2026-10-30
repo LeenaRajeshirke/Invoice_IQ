@@ -1,0 +1,27 @@
+﻿python : Python was 
+not found; run without 
+arguments to install 
+from the Microsoft 
+Store, or disable this 
+shortcut from Settings 
+> Apps > Advanced app 
+settings > App 
+execution aliases.
+At line:1 char:13
++ cd backend; python 
+-m unittest discover 
+-s tests 2>&1 | 
+Out-File -Fil ...
++             ~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (Python was no   
+ t ...cution aliase    
+s.:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
